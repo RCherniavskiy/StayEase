@@ -1,0 +1,81 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-users-table
+      author: RuslanCherniavskyi
+      changes:
+        - createTable:
+            tableName: users
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: email
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: password
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: first_name
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: last_name
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: is_deleted
+                  type: boolean
+                  defaultValueBoolean: false
+                  constraints:
+                    nullable: false
+
+  - changeSet:
+      id: create-users_role_types-table
+      author: RuslanCherniavskyi
+      changes:
+        - createTable:
+            tableName: users_role_types
+            columns:
+              - column:
+                  name: user_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: role_type_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+
+  - changeSet:
+      id: add-foreign-keys-users_role_types-table
+      author: RuslanCherniavskyi
+      changes:
+        - addForeignKeyConstraint:
+            baseTableName: users_role_types
+            baseColumnNames:
+              - user_id
+            referencedTableName: users
+            referencedColumnNames:
+              - id
+            constraintName: fk_users_role_types_user
+
+        - addForeignKeyConstraint:
+            baseTableName: users_role_types
+            baseColumnNames:
+              - role_type_id
+            referencedTableName: role_types
+            referencedColumnNames:
+              - id
+            constraintName: fk_users_role_types_role_type

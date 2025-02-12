@@ -1,0 +1,95 @@
+databaseChangeLog:
+  - changeSet:
+      id: insert-accommodation-type-to-table
+      author: RuslanCherniavskyi
+      changes:
+        - preConditions:
+              onFail: CONTINUE
+              sqlCheck:
+                expectedResult: 0
+                sql: SELECT COUNT(*) FROM accommodation_types WHERE name = 'HOUSE'
+          insert:
+            tableName: accommodation_types
+            columns:
+              - column:
+                  name: id
+                  valueNumeric: 1
+              - column:
+                  name: name
+                  value: HOUSE
+
+        - preConditions:
+            onFail: CONTINUE
+            sqlCheck:
+              expectedResult: 0
+              sql: SELECT COUNT(*) FROM accommodation_types WHERE name = 'APARTMENT'
+          insert:
+            tableName: accommodation_types
+            columns:
+              - column:
+                  name: id
+                  valueNumeric: 2
+              - column:
+                  name: name
+                  value: APARTMENT
+
+        - preConditions:
+            onFail: CONTINUE
+            sqlCheck:
+              expectedResult: 0
+              sql: SELECT COUNT(*) FROM accommodation_types WHERE name = 'CONDO'
+          insert:
+            tableName: accommodation_types
+            columns:
+              - column:
+                  name: id
+                  valueNumeric: 3
+              - column:
+                  name: name
+                  value: CONDO
+
+        - preConditions:
+            onFail: CONTINUE
+            sqlCheck:
+              expectedResult: 0
+              sql: SELECT COUNT(*) FROM accommodation_types WHERE name = 'VACATION_HOME'
+          insert:
+            tableName: accommodation_types
+            columns:
+              - column:
+                  name: id
+                  valueNumeric: 4
+              - column:
+                  name: name
+                  value: VACATION_HOME
+
+        - preConditions:
+            onFail: CONTINUE
+            sqlCheck:
+              expectedResult: 0
+              sql: SELECT COUNT(*) FROM accommodation_types WHERE name = 'HOTEL'
+          insert:
+            tableName: accommodation_types
+            columns:
+              - column:
+                  name: id
+                  valueNumeric: 5
+              - column:
+                  name: name
+                  value: HOTEL
+
+        - preConditions:
+            onFail: CONTINUE
+            sqlCheck:
+              expectedResult: 0
+              sql: SELECT COUNT(*) FROM accommodation_types WHERE name = 'HOSTEL'
+          insert:
+            tableName: accommodation_types
+            columns:
+              - column:
+                  name: id
+                  valueNumeric: 6
+              - column:
+                  name: name
+                  value: HOSTEL
+

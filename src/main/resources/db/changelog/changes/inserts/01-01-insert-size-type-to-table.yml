@@ -1,0 +1,64 @@
+databaseChangeLog:
+  - changeSet:
+      id: insert-size-type-to-table
+      author: RuslanCherniavskyi
+      changes:
+        - preConditions:
+            onFail: CONTINUE
+            sqlCheck:
+              expectedResult: 0
+              sql: SELECT COUNT(*) FROM size_types WHERE name = 'ONE_PEOPLE'
+          insert:
+            tableName: size_types
+            columns:
+              - column:
+                  name: id
+                  valueNumeric: 1
+              - column:
+                  name: name
+                  value: 'ONE_PEOPLE'
+
+        - preConditions:
+            onFail: CONTINUE
+            sqlCheck:
+              expectedResult: 0
+              sql: SELECT COUNT(*) FROM size_types WHERE name = 'TWO_PEOPLE'
+          insert:
+            tableName: size_types
+            columns:
+              - column:
+                  name: id
+                  valueNumeric: 2
+              - column:
+                  name: name
+                  value: 'TWO_PEOPLE'
+
+        - preConditions:
+            onFail: CONTINUE
+            sqlCheck:
+              expectedResult: 0
+              sql: SELECT COUNT(*) FROM size_types WHERE name = 'THREE_PEOPLE'
+          insert:
+            tableName: size_types
+            columns:
+              - column:
+                  name: id
+                  valueNumeric: 3
+              - column:
+                  name: name
+                  value: 'THREE_PEOPLE'
+
+        - preConditions:
+            onFail: CONTINUE
+            sqlCheck:
+              expectedResult: 0
+              sql: SELECT COUNT(*) FROM size_types WHERE name = 'FOUR_PEOPLE'
+          insert:
+            tableName: size_types
+            columns:
+              - column:
+                  name: id
+                  valueNumeric: 4
+              - column:
+                  name: name
+                  value: 'FOUR_PEOPLE'
