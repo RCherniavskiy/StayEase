@@ -1,0 +1,64 @@
+databaseChangeLog:
+  - changeSet:
+      id: insert-booking-status-to-table
+      author: RuslanCherniavskyi
+      changes:
+        - preConditions:
+            onFail: CONTINUE
+            sqlCheck:
+              expectedResult: 0
+              sql: SELECT COUNT(*) FROM booking_status WHERE name = 'PENDING'
+          insert:
+            tableName: booking_status
+            columns:
+              - column:
+                  name: id
+                  valueNumeric: 1
+              - column:
+                  name: name
+                  value: 'PENDING'
+
+        - preConditions:
+            onFail: CONTINUE
+            sqlCheck:
+              expectedResult: 0
+              sql: SELECT COUNT(*) FROM booking_status WHERE name = 'CONFIRMED'
+          insert:
+            tableName: booking_status
+            columns:
+              - column:
+                  name: id
+                  valueNumeric: 2
+              - column:
+                  name: name
+                  value: 'CONFIRMED'
+
+        - preConditions:
+            onFail: CONTINUE
+            sqlCheck:
+              expectedResult: 0
+              sql: SELECT COUNT(*) FROM booking_status WHERE name = 'CANCELED'
+          insert:
+            tableName: booking_status
+            columns:
+              - column:
+                  name: id
+                  valueNumeric: 3
+              - column:
+                  name: name
+                  value: 'CANCELED'
+
+        - preConditions:
+            onFail: CONTINUE
+            sqlCheck:
+              expectedResult: 0
+              sql: SELECT COUNT(*) FROM booking_status WHERE name = 'EXPIRED'
+          insert:
+            tableName: booking_status
+            columns:
+              - column:
+                  name: id
+                  valueNumeric: 4
+              - column:
+                  name: name
+                  value: 'EXPIRED'

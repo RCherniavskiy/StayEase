@@ -1,0 +1,94 @@
+databaseChangeLog:
+  - changeSet:
+      id: insert-amenity-type-to-table
+      author: RuslanCherniavskyi
+      changes:
+        - preConditions:
+            onFail: CONTINUE
+            sqlCheck:
+              expectedResult: 0
+              sql: SELECT COUNT(*) FROM amenity_types WHERE name = 'SWIMMING_POOL'
+          insert:
+            tableName: amenity_types
+            columns:
+              - column:
+                  name: id
+                  valueNumeric: 1
+              - column:
+                  name: name
+                  value: 'SWIMMING_POOL'
+
+        - preConditions:
+            onFail: CONTINUE
+            sqlCheck:
+              expectedResult: 0
+              sql: SELECT COUNT(*) FROM amenity_types WHERE name = 'GYM'
+          insert:
+            tableName: amenity_types
+            columns:
+              - column:
+                  name: id
+                  valueNumeric: 2
+              - column:
+                  name: name
+                  value: 'GYM'
+
+        - preConditions:
+            onFail: CONTINUE
+            sqlCheck:
+              expectedResult: 0
+              sql: SELECT COUNT(*) FROM amenity_types WHERE name = 'FREE_WIFI'
+          insert:
+            tableName: amenity_types
+            columns:
+              - column:
+                  name: id
+                  valueNumeric: 3
+              - column:
+                  name: name
+                  value: 'FREE_WIFI'
+
+        - preConditions:
+            onFail: CONTINUE
+            sqlCheck:
+              expectedResult: 0
+              sql: SELECT COUNT(*) FROM amenity_types WHERE name = 'PARKING'
+          insert:
+            tableName: amenity_types
+            columns:
+              - column:
+                  name: id
+                  valueNumeric: 4
+              - column:
+                  name: name
+                  value: 'PARKING'
+
+        - preConditions:
+            onFail: CONTINUE
+            sqlCheck:
+              expectedResult: 0
+              sql: SELECT COUNT(*) FROM amenity_types WHERE name = 'BREAKFAST_INCLUDED'
+          insert:
+            tableName: amenity_types
+            columns:
+              - column:
+                  name: id
+                  valueNumeric: 5
+              - column:
+                  name: name
+                  value: 'BREAKFAST_INCLUDED'
+
+        - preConditions:
+            onFail: CONTINUE
+            sqlCheck:
+              expectedResult: 0
+              sql: SELECT COUNT(*) FROM amenity_types WHERE name = 'PET_FRIENDLY'
+          insert:
+            tableName: amenity_types
+            columns:
+              - column:
+                  name: id
+                  valueNumeric: 6
+              - column:
+                  name: name
+                  value: 'PET_FRIENDLY'

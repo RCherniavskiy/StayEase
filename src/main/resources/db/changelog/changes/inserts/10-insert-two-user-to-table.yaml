@@ -1,0 +1,103 @@
+databaseChangeLog:
+  - changeSet:
+      id: insert-users
+      author: RuslanCherniavskyi
+      changes:
+        - preConditions:
+            onFail: MARK_RAN
+            sqlCheck:
+              expectedResult: 0
+              sql: SELECT COUNT(*) FROM users WHERE email = 'adm@i.com'
+          insert:
+            tableName: users
+            columns:
+              - column:
+                  name: id
+                  valueNumeric: 1
+              - column:
+                  name: email
+                  value: 'adm@i.com'
+              - column:
+                  name: password
+                  value: '$2a$10$jQuBxj/mnQTEY60FgHeYiu8SahQYuj0O8shQtDMIAOAC1kYH3/2/6'
+              - column:
+                  name: first_name
+                  value: 'Alice'
+              - column:
+                  name: last_name
+                  value: 'Alison'
+              - column:
+                  name: is_deleted
+                  value: 0
+
+        - preConditions:
+            onFail: MARK_RAN
+            sqlCheck:
+              expectedResult: 0
+              sql: SELECT COUNT(*) FROM users WHERE email = 'usr@i.com'
+          insert:
+            tableName: users
+            columns:
+              - column:
+                  name: id
+                  valueNumeric: 2
+              - column:
+                  name: email
+                  value: 'usr@i.com'
+              - column:
+                  name: password
+                  value: '$2a$10$jQuBxj/mnQTEY60FgHeYiu8SahQYuj0O8shQtDMIAOAC1kYH3/2/6'
+              - column:
+                  name: first_name
+                  value: 'Bob'
+              - column:
+                  name: last_name
+                  value: 'Bobson'
+              - column:
+                  name: is_deleted
+                  value: 0
+
+        - preConditions:
+            onFail: MARK_RAN
+            sqlCheck:
+              expectedResult: 0
+              sql: SELECT COUNT(*) FROM users_role_types WHERE user_id = 1 AND role_type_id = 1
+          insert:
+            tableName: users_role_types
+            columns:
+              - column:
+                  name: user_id
+                  valueNumeric: 1
+              - column:
+                  name: role_type_id
+                  valueNumeric: 1
+
+        - preConditions:
+            onFail: MARK_RAN
+            sqlCheck:
+              expectedResult: 0
+              sql: SELECT COUNT(*) FROM users_role_types WHERE user_id = 1 AND role_type_id = 2
+          insert:
+            tableName: users_role_types
+            columns:
+              - column:
+                  name: user_id
+                  valueNumeric: 1
+              - column:
+                  name: role_type_id
+                  valueNumeric: 2
+
+        - preConditions:
+            onFail: MARK_RAN
+            sqlCheck:
+              expectedResult: 0
+              sql: SELECT COUNT(*) FROM users_role_types WHERE user_id = 2 AND role_type_id = 1
+          insert:
+            tableName: users_role_types
+            columns:
+              - column:
+                  name: user_id
+                  valueNumeric: 2
+              - column:
+                  name: role_type_id
+                  valueNumeric: 1

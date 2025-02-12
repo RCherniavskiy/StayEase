@@ -1,0 +1,49 @@
+databaseChangeLog:
+  - changeSet:
+      id: insert-payment-status-to-table
+      author: RuslanCherniavskyi
+      changes:
+        - preConditions:
+            onFail: CONTINUE
+            sqlCheck:
+              expectedResult: 0
+              sql: SELECT COUNT(*) FROM payment_status WHERE name = 'PENDING'
+          insert:
+            tableName: payment_status
+            columns:
+              - column:
+                  name: id
+                  valueNumeric: 1
+              - column:
+                  name: name
+                  value: 'PENDING'
+
+        - preConditions:
+            onFail: CONTINUE
+            sqlCheck:
+              expectedResult: 0
+              sql: SELECT COUNT(*) FROM payment_status WHERE name = 'PAID'
+          insert:
+            tableName: payment_status
+            columns:
+              - column:
+                  name: id
+                  valueNumeric: 2
+              - column:
+                  name: name
+                  value: 'PAID'
+
+        - preConditions:
+            onFail: CONTINUE
+            sqlCheck:
+              expectedResult: 0
+              sql: SELECT COUNT(*) FROM payment_status WHERE name = 'CANCEL'
+          insert:
+            tableName: payment_status
+            columns:
+              - column:
+                  name: id
+                  valueNumeric: 3
+              - column:
+                  name: name
+                  value: 'CANCEL'
