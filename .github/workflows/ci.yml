@@ -33,7 +33,7 @@ jobs:
 
       - name: Build with Maven
         env:
-          SPRING_DATASOURCE_URL: ${{ secrets.SPRING_DATASOURCE_URL }}  # Строка подключения к базе данных
+          SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/test # Строка подключения к базе данных
           SPRING_DATASOURCE_USERNAME: ${{ secrets.SPRING_DATASOURCE_USERNAME }}
           SPRING_DATASOURCE_PASSWORD: ${{ secrets.SPRING_DATASOURCE_PASSWORD }}
         run: mvn --batch-mode --update-snapshots verify
