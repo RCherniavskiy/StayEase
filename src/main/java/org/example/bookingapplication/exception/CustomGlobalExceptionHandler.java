@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import org.example.bookingapplication.exception.booking.BookingInfoException;
+import org.example.bookingapplication.exception.booking.InvalidDateException;
 import org.example.bookingapplication.exception.repository.EntityAlreadyExistsException;
 import org.example.bookingapplication.exception.repository.EntityNotFoundException;
 import org.example.bookingapplication.exception.user.PasswordNotValidException;
@@ -73,10 +75,22 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
                 HttpStatusCode.valueOf(UNAUTHORIZED_STATUS_CODE));
     }
 
+    @ExceptionHandler(InvalidDateException.class)
+    public ResponseEntity<Object> handleCustomException(InvalidDateException ex) {
+        return getObjectResponseEntity(ex.getMessage(),
+                HttpStatusCode.valueOf(BAD_REQUEST_STATUS_CODE));
+    }
+
     @ExceptionHandler(UserDontHavePermissions.class)
     public ResponseEntity<Object> handleCustomException(UserDontHavePermissions ex) {
         return getObjectResponseEntity(ex.getMessage(),
                 HttpStatusCode.valueOf(FORBIDDEN_STATUS_CODE));
+    }
+
+    @ExceptionHandler(BookingInfoException.class)
+    public ResponseEntity<Object> handleCustomException(BookingInfoException ex) {
+        return getObjectResponseEntity(ex.getMessage(),
+                HttpStatusCode.valueOf(BAD_REQUEST_STATUS_CODE));
     }
 
     private ResponseEntity<Object> getObjectResponseEntity(String message,
