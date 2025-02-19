@@ -37,4 +37,7 @@ jobs:
           SPRING_DATASOURCE_PASSWORD: ${{ secrets.SPRING_DATASOURCE_PASSWORD }}
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
           JWT_EXPIRATIONS: ${{ secrets.JWT_EXPIRATIONS }}
+          BOT_NAME: ${{ secrets.BOT_NAME }}
+          BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+          TELEGRAM_SECRET: ${{ secrets.TELEGRAM_SECRET }}
         run: mvn --batch-mode --update-snapshots verify

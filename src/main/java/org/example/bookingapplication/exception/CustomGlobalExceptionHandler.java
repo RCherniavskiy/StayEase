@@ -8,6 +8,10 @@ import org.example.bookingapplication.exception.booking.BookingInfoException;
 import org.example.bookingapplication.exception.booking.InvalidDateException;
 import org.example.bookingapplication.exception.repository.EntityAlreadyExistsException;
 import org.example.bookingapplication.exception.repository.EntityNotFoundException;
+import org.example.bookingapplication.exception.telegram.EmailTokenGeneratorException;
+import org.example.bookingapplication.exception.telegram.InvalidTelegramToken;
+import org.example.bookingapplication.exception.telegram.TelegramBotException;
+import org.example.bookingapplication.exception.telegram.TelegramSendMassageException;
 import org.example.bookingapplication.exception.user.PasswordNotValidException;
 import org.example.bookingapplication.exception.user.UserDontHavePermissions;
 import org.springframework.http.HttpHeaders;
@@ -91,6 +95,30 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
     public ResponseEntity<Object> handleCustomException(BookingInfoException ex) {
         return getObjectResponseEntity(ex.getMessage(),
                 HttpStatusCode.valueOf(BAD_REQUEST_STATUS_CODE));
+    }
+
+    @ExceptionHandler(TelegramSendMassageException.class)
+    public ResponseEntity<Object> handleCustomException(TelegramSendMassageException ex) {
+        return getObjectResponseEntity(ex.getMessage(),
+                HttpStatusCode.valueOf(INTERNAL_SERVER_STATUS_CODE));
+    }
+
+    @ExceptionHandler(EmailTokenGeneratorException.class)
+    public ResponseEntity<Object> handleCustomException(EmailTokenGeneratorException ex) {
+        return getObjectResponseEntity(ex.getMessage(),
+                HttpStatusCode.valueOf(INTERNAL_SERVER_STATUS_CODE));
+    }
+
+    @ExceptionHandler(InvalidTelegramToken.class)
+    public ResponseEntity<Object> handleCustomException(InvalidTelegramToken ex) {
+        return getObjectResponseEntity(ex.getMessage(),
+                HttpStatusCode.valueOf(BAD_REQUEST_STATUS_CODE));
+    }
+
+    @ExceptionHandler(TelegramBotException.class)
+    public ResponseEntity<Object> handleCustomException(TelegramBotException ex) {
+        return getObjectResponseEntity(ex.getMessage(),
+                HttpStatusCode.valueOf(INTERNAL_SERVER_STATUS_CODE));
     }
 
     private ResponseEntity<Object> getObjectResponseEntity(String message,
