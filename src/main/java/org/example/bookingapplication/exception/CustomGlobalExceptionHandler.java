@@ -6,6 +6,10 @@ import java.util.List;
 import java.util.Map;
 import org.example.bookingapplication.exception.booking.BookingInfoException;
 import org.example.bookingapplication.exception.booking.InvalidDateException;
+import org.example.bookingapplication.exception.payment.CantPaidBookingException;
+import org.example.bookingapplication.exception.payment.PaymentCancelException;
+import org.example.bookingapplication.exception.payment.PaymentDontConfirmException;
+import org.example.bookingapplication.exception.payment.StripeSessionException;
 import org.example.bookingapplication.exception.repository.EntityAlreadyExistsException;
 import org.example.bookingapplication.exception.repository.EntityNotFoundException;
 import org.example.bookingapplication.exception.telegram.EmailTokenGeneratorException;
@@ -95,6 +99,30 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
     public ResponseEntity<Object> handleCustomException(BookingInfoException ex) {
         return getObjectResponseEntity(ex.getMessage(),
                 HttpStatusCode.valueOf(BAD_REQUEST_STATUS_CODE));
+    }
+
+    @ExceptionHandler(StripeSessionException.class)
+    public ResponseEntity<Object> handleCustomException(StripeSessionException ex) {
+        return getObjectResponseEntity(ex.getMessage(),
+                HttpStatusCode.valueOf(INTERNAL_SERVER_STATUS_CODE));
+    }
+
+    @ExceptionHandler(PaymentDontConfirmException.class)
+    public ResponseEntity<Object> handleCustomException(PaymentDontConfirmException ex) {
+        return getObjectResponseEntity(ex.getMessage(),
+                HttpStatusCode.valueOf(CONFLICT_STATUS_CODE));
+    }
+
+    @ExceptionHandler(CantPaidBookingException.class)
+    public ResponseEntity<Object> handleCustomException(CantPaidBookingException ex) {
+        return getObjectResponseEntity(ex.getMessage(),
+                HttpStatusCode.valueOf(CONFLICT_STATUS_CODE));
+    }
+
+    @ExceptionHandler(PaymentCancelException.class)
+    public ResponseEntity<Object> handleCustomException(PaymentCancelException ex) {
+        return getObjectResponseEntity(ex.getMessage(),
+                HttpStatusCode.valueOf(CONFLICT_STATUS_CODE));
     }
 
     @ExceptionHandler(TelegramSendMassageException.class)
