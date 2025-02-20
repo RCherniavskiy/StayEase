@@ -8,7 +8,7 @@ import org.example.bookingapplication.exception.repository.EntityNotFoundExcepti
 import org.example.bookingapplication.mapper.UserMapper;
 import org.example.bookingapplication.model.telegram.TelegramChat;
 import org.example.bookingapplication.model.user.User;
-import org.example.bookingapplication.repository.telgeramchat.TelegramChatRepository;
+import org.example.bookingapplication.repository.telegramchat.TelegramChatRepository;
 import org.example.bookingapplication.repository.user.UserRepository;
 import org.example.bookingapplication.service.TelegramService;
 import org.example.bookingapplication.telegram.util.EmailTokenGenerator;

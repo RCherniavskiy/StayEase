@@ -6,7 +6,7 @@ import org.example.bookingapplication.dto.users.response.UserResponseDto;
 import org.example.bookingapplication.exception.telegram.InvalidTelegramToken;
 import org.example.bookingapplication.exception.telegram.TelegramBotException;
 import org.example.bookingapplication.model.telegram.TelegramChat;
-import org.example.bookingapplication.repository.telgeramchat.TelegramChatRepository;
+import org.example.bookingapplication.repository.telegramchat.TelegramChatRepository;
 import org.example.bookingapplication.service.TelegramService;
 import org.example.bookingapplication.telegram.util.NotificationConfigurator;
 import org.springframework.stereotype.Component;
