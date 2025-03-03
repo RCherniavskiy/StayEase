@@ -6,21 +6,6 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
-    services:
-      postgres:
-        image: postgres:14
-        env:
-          POSTGRES_DB: test
-          POSTGRES_USER: ${{ secrets.SPRING_DATASOURCE_USERNAME }}
-          POSTGRES_PASSWORD: ${{ secrets.SPRING_DATASOURCE_PASSWORD }}
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK 17
@@ -29,18 +14,5 @@ jobs:
           java-version: '17'
           distribution: 'adopt'
           cache: maven
-
       - name: Build with Maven
-        env:
-          SPRING_DATASOURCE_URL: ${{ secrets.SPRING_DATASOURCE_URL }}  # Строка подключения к базе данных
-          SPRING_DATASOURCE_USERNAME: ${{ secrets.SPRING_DATASOURCE_USERNAME }}
-          SPRING_DATASOURCE_PASSWORD: ${{ secrets.SPRING_DATASOURCE_PASSWORD }}
-          JWT_SECRET: ${{ secrets.JWT_SECRET }}
-          JWT_EXPIRATIONS: ${{ secrets.JWT_EXPIRATIONS }}
-          BOT_NAME: ${{ secrets.BOT_NAME }}
-          BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
-          TELEGRAM_SECRET: ${{ secrets.TELEGRAM_SECRET }}
-          STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
-          STRIPE_SUCCESS_URL: ${{ secrets.STRIPE_SUCCESS_URL }}
-          STRIPE_CANCEL_URL: ${{ secrets.STRIPE_CANCEL_URL }}
         run: mvn --batch-mode --update-snapshots verify
