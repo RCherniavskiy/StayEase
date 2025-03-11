@@ -25,6 +25,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class UserServiceImpl implements UserService {
     private static final RoleType.RoleName CUSTOMER_ROLE_TYPE = RoleType.RoleName.CUSTOMER;
     private final RoleTypeRepository roleTypeRepository;
@@ -33,13 +34,11 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
 
     @Override
-    @Transactional
     public UserResponseDto getInfo(String email) {
         return userMapper.toResponseDto(getUser(email));
     }
 
     @Override
-    @Transactional
     public UserResponseDto updateInfo(String email, UserUpdateInfoRequestDto requestDto) {
         User user = getUser(email);
         setUserInfo(user, requestDto);
@@ -47,11 +46,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @Transactional
     public void updatePassword(String email, UserUpdatePasswordRequestDto requestDto) {
         User user = getUser(email);
         if (!passwordEncoder.matches(requestDto.getOldPassword(), user.getPassword())) {
-            throw new PasswordNotValidException("Old password dont valid");
+            throw new PasswordNotValidException("Old password don't valid");
         }
         isPasswordsValid(requestDto.getNewPassword(), requestDto.getRepeatNewPassword());
         setPassword(user, requestDto.getNewPassword());
@@ -59,7 +57,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @Transactional
     public UserResponseDto updateRoles(Long id, UserUpdateRolesRequestDto requestDto) {
         User user = getUser(id);
         setRoleType(user, requestDto.getRoleName());
@@ -67,7 +64,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @Transactional
     public UserResponseDto register(UserRequestDto requestDto) {
         isUserAlreadyExist(requestDto.getEmail());
         User newUser = userMapper.toModelWithoutPasswordAndRoles(requestDto);
@@ -85,33 +81,33 @@ public class UserServiceImpl implements UserService {
     private void isUserAlreadyExist(String email) {
         Optional<User> userByEmail = userRepository.findUserByEmail(email);
         if (userByEmail.isPresent()) {
-            throw new EntityAlreadyExistsException("User with email: " + email + " is exist");
+            throw new EntityAlreadyExistsException("User with email: " + email + " already exists");
         }
     }
 
     private User getUser(String email) {
         return userRepository.findUserByEmail(email).orElseThrow(
-                () -> new EntityNotFoundException("Cant find user with email: " + email));
+                () -> new EntityNotFoundException("Can't find user with email: " + email));
     }
 
     private User getUser(Long id) {
         return userRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Cant find user with id: " + id));
+                .orElseThrow(() -> new EntityNotFoundException("Can't find user with id: " + id));
     }
 
     private void setPassword(User user, String password) {
-        String encodePassword = passwordEncoder.encode(password);
-        user.setPassword(encodePassword);
+        String encodedPassword = passwordEncoder.encode(password);
+        user.setPassword(encodedPassword);
     }
 
     private void isPasswordsValid(String password, String repeatPassword) {
         if (!password.equals(repeatPassword)) {
-            throw new PasswordNotValidException("Passwords is different");
+            throw new PasswordNotValidException("Passwords are different");
         }
     }
 
     private void setRoleType(User user, RoleType.RoleName highestRole) {
-        List<RoleType.RoleName> roleNamesSubList = RoleType.RoleName.getRolesUpTo(highestRole);;
+        List<RoleType.RoleName> roleNamesSubList = RoleType.RoleName.getRolesUpTo(highestRole);
         List<RoleType> roleTypes = roleTypeRepository.findRoleTypesByNameIn(roleNamesSubList);
         Set<RoleType> newRoleTypes = new HashSet<>(roleTypes);
         user.setRoles(newRoleTypes);
