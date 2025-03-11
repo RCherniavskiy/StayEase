@@ -1,24 +1,24 @@
 package org.example.bookingapplication.dto.addresses.request;
 
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 @Data
 public class AddressRequestDto {
-    @NotNull
+    @NotBlank
     private String country;
-    @NotNull
+    @NotBlank
     private String state;
-    @NotNull
+    @NotBlank
     private String city;
     private String district;
-    @NotNull
+    @NotBlank
     private String street;
-    @NotNull
+    @NotBlank
     private String houseNumber;
     private String apartmentNumber;
-    @NotNull
+    @NotBlank
     private String floor;
-    @NotNull
+    @NotBlank
     private String zipCode;
 }

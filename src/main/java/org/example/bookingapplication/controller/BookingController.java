@@ -2,6 +2,7 @@ package org.example.bookingapplication.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.example.bookingapplication.dto.bookings.request.BookingRequestDto;
@@ -30,7 +31,7 @@ public class BookingController {
     @PreAuthorize("hasAuthority('CUSTOMER')")
     @Operation(summary = "Booking",
             description = "create a bookings")
-    public BookingDto save(@RequestBody BookingRequestDto requestDto,
+    public BookingDto save(@RequestBody @Valid BookingRequestDto requestDto,
                            Authentication authentication) {
         return bookingService.save(requestDto, authentication.getName());
     }
@@ -64,7 +65,7 @@ public class BookingController {
     @Operation(summary = "Update bookings",
             description = "Update booking status, checkIn and checkOut date")
     public BookingDto update(@PathVariable Long id,
-                             @RequestBody BookingRequestDto requestDto,
+                             @RequestBody @Valid BookingRequestDto requestDto,
                              Authentication authentication) {
         return bookingService.updateInfo(id, requestDto, authentication.getName());
     }

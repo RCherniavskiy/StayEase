@@ -1,6 +1,5 @@
 package org.example.bookingapplication.model.accommodation;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -14,14 +13,16 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.math.BigDecimal;
 import java.util.Set;
-import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 import org.example.bookingapplication.model.booking.Booking;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
-@Data
+@Getter
+@Setter
 @EqualsAndHashCode(exclude = {"type", "address", "size", "amenities", "bookings"})
 @ToString(exclude = {"type", "address", "size", "amenities", "bookings"})
 @Entity
@@ -41,17 +42,15 @@ public class Accommodation {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "size_type_id", nullable = false)
     private SizeType size;
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany()
     @JoinTable(
             name = "accommodations_amenity_types",
             joinColumns = @JoinColumn(name = "accommodation_id"),
             inverseJoinColumns = @JoinColumn(name = "amenity_type_id")
     )
     private Set<AmenityType> amenities;
-    @Column(name = "daily_rate", nullable = false)
     private BigDecimal dailyRate;
     @OneToMany(mappedBy = "accommodation")
     private Set<Booking> bookings;
-    @Column(name = "is_deleted",nullable = false)
     private boolean isDeleted = false;
 }

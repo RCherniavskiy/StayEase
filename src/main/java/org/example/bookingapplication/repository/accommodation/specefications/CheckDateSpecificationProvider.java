@@ -18,8 +18,16 @@ import org.springframework.stereotype.Component;
 public class CheckDateSpecificationProvider
         implements SpecificationProvider<Accommodation, LocalDate[]> {
     private static final String TYPE_IDS_KEY = "checkDates";
+    private static final String PENDING_STATUS = "PENDING";
+    private static final String CONFIRMED_STATUS = "CONFIRMED";
     private static final int CHECK_IN_DATE_POSITION = 0;
     private static final int CHECK_OUT_DATE_POSITION = 1;
+    private static final String BOOKING_ACCOMMODATION_FIELD = "accommodation";
+    private static final String BOOKING_STATUS_FIELD = "status";
+    private static final String BOOKING_CHECK_DATES_FIELD = "checkDates";
+    private static final String BOOKING_CHECK_IN_DATE_FIELD = "checkInDate";
+    private static final String BOOKING_CHECK_OUT_DATE_FIELD = "checkOutDate";
+    private static final String BOOKING_ID_FIELD = "id";
 
     @Override
     public String getKey() {
@@ -35,33 +43,38 @@ public class CheckDateSpecificationProvider
             Subquery<Long> subquery = query.subquery(Long.class);
             Root<Booking> bookingRoot = subquery.from(Booking.class);
             Join<Booking, Accommodation> bookingAccommodationJoin =
-                    bookingRoot.join("accommodation");
-            Join<Booking, BookingStatus> statusJoin = bookingRoot.join("status");
+                    bookingRoot.join(BOOKING_ACCOMMODATION_FIELD);
+            Join<Booking, BookingStatus> statusJoin = bookingRoot.join(BOOKING_STATUS_FIELD);
 
-            subquery.select(criteriaBuilder.count(bookingRoot.get("id")));
+            subquery.select(criteriaBuilder.count(bookingRoot.get(BOOKING_ID_FIELD)));
 
             Predicate overlappingDates = criteriaBuilder.or(
-                    criteriaBuilder.between(bookingRoot.get("checkDates").get("checkInDate"),
+                    criteriaBuilder.between(bookingRoot.get(
+                            BOOKING_CHECK_DATES_FIELD).get(BOOKING_CHECK_IN_DATE_FIELD),
                             checkInDate, checkOutDate),
-                    criteriaBuilder.between(bookingRoot.get("checkDates").get("checkOutDate"),
+                    criteriaBuilder.between(bookingRoot.get(
+                            BOOKING_CHECK_DATES_FIELD).get(BOOKING_CHECK_OUT_DATE_FIELD),
                             checkInDate, checkOutDate),
                     criteriaBuilder.and(
-                            criteriaBuilder.lessThanOrEqualTo(bookingRoot.get("checkDates")
-                                    .get("checkInDate"), checkInDate),
-                            criteriaBuilder.greaterThanOrEqualTo(bookingRoot.get("checkDates")
-                                    .get("checkOutDate"), checkOutDate)
+                            criteriaBuilder.lessThanOrEqualTo(bookingRoot.get(
+                                    BOOKING_CHECK_DATES_FIELD)
+                                    .get(BOOKING_CHECK_IN_DATE_FIELD), checkInDate),
+                            criteriaBuilder.greaterThanOrEqualTo(bookingRoot.get(
+                                    BOOKING_CHECK_DATES_FIELD)
+                                    .get(BOOKING_CHECK_OUT_DATE_FIELD), checkOutDate)
                     )
             );
 
             Predicate statusIsPendingOrConfirmed = criteriaBuilder.or(
-                    criteriaBuilder.equal(statusJoin.get("name"), "PENDING"),
-                    criteriaBuilder.equal(statusJoin.get("name"), "CONFIRMED")
+                    criteriaBuilder.equal(statusJoin.get("name"), PENDING_STATUS),
+                    criteriaBuilder.equal(statusJoin.get("name"), CONFIRMED_STATUS)
             );
 
             subquery.where(
                     criteriaBuilder.and(
                             criteriaBuilder.equal(
-                                    bookingAccommodationJoin.get("id"), root.get("id")),
+                                    bookingAccommodationJoin.get(
+                                            BOOKING_ID_FIELD), root.get(BOOKING_ID_FIELD)),
                             statusIsPendingOrConfirmed,
                             overlappingDates
                     )

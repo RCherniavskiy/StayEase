@@ -31,12 +31,12 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 @ControllerAdvice
 public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler {
-    private static final int INTERNAL_SERVER_STATUS_CODE = 500;
     private static final int BAD_REQUEST_STATUS_CODE = 400;
     private static final int UNAUTHORIZED_STATUS_CODE = 401;
     private static final int FORBIDDEN_STATUS_CODE = 403;
     private static final int NOT_FOUND_STATUS_CODE = 404;
     private static final int CONFLICT_STATUS_CODE = 409;
+    private static final int INTERNAL_SERVER_STATUS_CODE = 500;
 
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(
@@ -45,116 +45,146 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
             HttpStatusCode status,
             WebRequest request
     ) {
+        Map<String, Object> errorsBody = new LinkedHashMap<>();
+        errorsBody.put("timestamp", LocalDateTime.now());
 
-        Map<String, String> errorsBody = new LinkedHashMap<>();
-        errorsBody.put("timestamp", String.valueOf(LocalDateTime.now()));
-        errorsBody.put("status", String.valueOf(HttpStatusCode.valueOf(BAD_REQUEST_STATUS_CODE)));
-        final List<String> messagesList = ex.getBindingResult().getAllErrors().stream()
+        List<String> messagesList = ex.getBindingResult()
+                .getAllErrors()
+                .stream()
                 .map(this::getErrorMessage)
                 .toList();
-        errorsBody.put("errors", messagesList.toString());
+
+        errorsBody.put("errors", messagesList);
         return new ResponseEntity<>(errorsBody, status);
     }
 
-    private String getErrorMessage(ObjectError e) {
-        if (e instanceof FieldError) {
-            String field = ((FieldError) e).getField();
-            String message = e.getDefaultMessage();
-            return field + " " + message;
-        }
-        return e.getDefaultMessage();
-    }
-
     @ExceptionHandler(EntityNotFoundException.class)
-    public ResponseEntity<Object> handleCustomException(EntityNotFoundException ex) {
-        return getObjectResponseEntity(ex.getMessage(),
-                HttpStatusCode.valueOf(NOT_FOUND_STATUS_CODE));
+    public ResponseEntity<Object> handleEntityNotFoundException(EntityNotFoundException ex) {
+        return getObjectResponseEntity(
+                ex.getMessage(),
+                HttpStatusCode.valueOf(NOT_FOUND_STATUS_CODE)
+        );
     }
 
     @ExceptionHandler(EntityAlreadyExistsException.class)
-    public ResponseEntity<Object> handleCustomException(EntityAlreadyExistsException ex) {
-        return getObjectResponseEntity(ex.getMessage(),
-                HttpStatusCode.valueOf(CONFLICT_STATUS_CODE));
+    public ResponseEntity<Object> handleEntityAlreadyExistsException(
+            EntityAlreadyExistsException ex) {
+        return getObjectResponseEntity(
+                ex.getMessage(),
+                HttpStatusCode.valueOf(CONFLICT_STATUS_CODE)
+        );
     }
 
     @ExceptionHandler(PasswordNotValidException.class)
-    public ResponseEntity<Object> handleCustomException(PasswordNotValidException ex) {
-        return getObjectResponseEntity(ex.getMessage(),
-                HttpStatusCode.valueOf(UNAUTHORIZED_STATUS_CODE));
+    public ResponseEntity<Object> handlePasswordNotValidException(PasswordNotValidException ex) {
+        return getObjectResponseEntity(
+                ex.getMessage(),
+                HttpStatusCode.valueOf(UNAUTHORIZED_STATUS_CODE)
+        );
     }
 
     @ExceptionHandler(InvalidDateException.class)
-    public ResponseEntity<Object> handleCustomException(InvalidDateException ex) {
-        return getObjectResponseEntity(ex.getMessage(),
-                HttpStatusCode.valueOf(BAD_REQUEST_STATUS_CODE));
+    public ResponseEntity<Object> handleInvalidDateException(InvalidDateException ex) {
+        return getObjectResponseEntity(
+                ex.getMessage(),
+                HttpStatusCode.valueOf(BAD_REQUEST_STATUS_CODE)
+        );
     }
 
     @ExceptionHandler(UserDontHavePermissions.class)
-    public ResponseEntity<Object> handleCustomException(UserDontHavePermissions ex) {
-        return getObjectResponseEntity(ex.getMessage(),
-                HttpStatusCode.valueOf(FORBIDDEN_STATUS_CODE));
+    public ResponseEntity<Object> handleUserDontHavePermissions(UserDontHavePermissions ex) {
+        return getObjectResponseEntity(
+                ex.getMessage(),
+                HttpStatusCode.valueOf(FORBIDDEN_STATUS_CODE)
+        );
     }
 
     @ExceptionHandler(BookingInfoException.class)
-    public ResponseEntity<Object> handleCustomException(BookingInfoException ex) {
-        return getObjectResponseEntity(ex.getMessage(),
-                HttpStatusCode.valueOf(BAD_REQUEST_STATUS_CODE));
+    public ResponseEntity<Object> handleBookingInfoException(BookingInfoException ex) {
+        return getObjectResponseEntity(
+                ex.getMessage(),
+                HttpStatusCode.valueOf(BAD_REQUEST_STATUS_CODE)
+        );
     }
 
     @ExceptionHandler(StripeSessionException.class)
-    public ResponseEntity<Object> handleCustomException(StripeSessionException ex) {
-        return getObjectResponseEntity(ex.getMessage(),
-                HttpStatusCode.valueOf(INTERNAL_SERVER_STATUS_CODE));
+    public ResponseEntity<Object> handleStripeSessionException(StripeSessionException ex) {
+        return getObjectResponseEntity(
+                ex.getMessage(),
+                HttpStatusCode.valueOf(INTERNAL_SERVER_STATUS_CODE)
+        );
     }
 
     @ExceptionHandler(PaymentDontConfirmException.class)
-    public ResponseEntity<Object> handleCustomException(PaymentDontConfirmException ex) {
-        return getObjectResponseEntity(ex.getMessage(),
-                HttpStatusCode.valueOf(CONFLICT_STATUS_CODE));
+    public ResponseEntity<Object> handlePaymentDontConfirmException(
+            PaymentDontConfirmException ex) {
+        return getObjectResponseEntity(
+                ex.getMessage(),
+                HttpStatusCode.valueOf(CONFLICT_STATUS_CODE)
+        );
     }
 
     @ExceptionHandler(CantPaidBookingException.class)
-    public ResponseEntity<Object> handleCustomException(CantPaidBookingException ex) {
-        return getObjectResponseEntity(ex.getMessage(),
-                HttpStatusCode.valueOf(CONFLICT_STATUS_CODE));
+    public ResponseEntity<Object> handleCantPaidBookingException(CantPaidBookingException ex) {
+        return getObjectResponseEntity(
+                ex.getMessage(),
+                HttpStatusCode.valueOf(CONFLICT_STATUS_CODE)
+        );
     }
 
     @ExceptionHandler(PaymentCancelException.class)
-    public ResponseEntity<Object> handleCustomException(PaymentCancelException ex) {
-        return getObjectResponseEntity(ex.getMessage(),
-                HttpStatusCode.valueOf(CONFLICT_STATUS_CODE));
+    public ResponseEntity<Object> handlePaymentCancelException(PaymentCancelException ex) {
+        return getObjectResponseEntity(
+                ex.getMessage(),
+                HttpStatusCode.valueOf(CONFLICT_STATUS_CODE)
+        );
     }
 
     @ExceptionHandler(TelegramSendMassageException.class)
-    public ResponseEntity<Object> handleCustomException(TelegramSendMassageException ex) {
-        return getObjectResponseEntity(ex.getMessage(),
-                HttpStatusCode.valueOf(INTERNAL_SERVER_STATUS_CODE));
+    public ResponseEntity<Object> handleTelegramSendMassageException(
+            TelegramSendMassageException ex) {
+        return getObjectResponseEntity(
+                ex.getMessage(),
+                HttpStatusCode.valueOf(INTERNAL_SERVER_STATUS_CODE)
+        );
     }
 
     @ExceptionHandler(EmailTokenGeneratorException.class)
-    public ResponseEntity<Object> handleCustomException(EmailTokenGeneratorException ex) {
-        return getObjectResponseEntity(ex.getMessage(),
-                HttpStatusCode.valueOf(INTERNAL_SERVER_STATUS_CODE));
+    public ResponseEntity<Object> handleEmailTokenGeneratorException(
+            EmailTokenGeneratorException ex) {
+        return getObjectResponseEntity(
+                ex.getMessage(),
+                HttpStatusCode.valueOf(INTERNAL_SERVER_STATUS_CODE)
+        );
     }
 
     @ExceptionHandler(InvalidTelegramToken.class)
-    public ResponseEntity<Object> handleCustomException(InvalidTelegramToken ex) {
-        return getObjectResponseEntity(ex.getMessage(),
-                HttpStatusCode.valueOf(BAD_REQUEST_STATUS_CODE));
+    public ResponseEntity<Object> handleInvalidTelegramToken(InvalidTelegramToken ex) {
+        return getObjectResponseEntity(
+                ex.getMessage(),
+                HttpStatusCode.valueOf(BAD_REQUEST_STATUS_CODE)
+        );
     }
 
     @ExceptionHandler(TelegramBotException.class)
-    public ResponseEntity<Object> handleCustomException(TelegramBotException ex) {
-        return getObjectResponseEntity(ex.getMessage(),
-                HttpStatusCode.valueOf(INTERNAL_SERVER_STATUS_CODE));
+    public ResponseEntity<Object> handleTelegramBotException(TelegramBotException ex) {
+        return getObjectResponseEntity(
+                ex.getMessage(),
+                HttpStatusCode.valueOf(INTERNAL_SERVER_STATUS_CODE)
+        );
     }
 
-    private ResponseEntity<Object> getObjectResponseEntity(String message,
-                                                           HttpStatusCode httpStatusCode) {
-        Map<String, String> errorsBody = new LinkedHashMap<>();
-        errorsBody.put("timestamp", String.valueOf(LocalDateTime.now()));
-        errorsBody.put("status", String.valueOf(httpStatusCode));
+    private String getErrorMessage(ObjectError error) {
+        if (error instanceof FieldError fieldError) {
+            return fieldError.getField() + " " + fieldError.getDefaultMessage();
+        }
+        return error.getDefaultMessage();
+    }
+
+    private ResponseEntity<Object> getObjectResponseEntity(String message, HttpStatusCode status) {
+        Map<String, Object> errorsBody = new LinkedHashMap<>();
+        errorsBody.put("timestamp", LocalDateTime.now());
         errorsBody.put("errors", message);
-        return new ResponseEntity<>(errorsBody, httpStatusCode);
+        return new ResponseEntity<>(errorsBody, status);
     }
 }

@@ -1,5 +1,6 @@
 package org.example.bookingapplication.dto.accommodations.request;
 
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import java.math.BigDecimal;
@@ -17,7 +18,7 @@ public class AccommodationRequestDto {
     @NotNull
     @Positive
     private Long sizeId;
-    @NotNull
+    @NotEmpty
     private Set<Long> amenityTypeIds;
     @NotNull
     @Positive

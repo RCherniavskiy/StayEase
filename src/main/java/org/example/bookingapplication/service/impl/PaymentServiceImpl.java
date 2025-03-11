@@ -36,6 +36,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class PaymentServiceImpl implements PaymentService {
     private static final SessionCreateParams.PaymentMethodType PAYMENT_METHOD
             = SessionCreateParams.PaymentMethodType.CARD;
@@ -67,7 +68,6 @@ public class PaymentServiceImpl implements PaymentService {
     private final BookingBot bookingBot;
 
     @Override
-    @Transactional
     public String createPaymentCheckoutSession(Long id, String email) {
         Booking booking = getBookingById(id);
         checkBookingStatus(booking);
@@ -179,7 +179,6 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
-    @Transactional
     public PaymentDto successPayment(String sessionId) {
         Payment payment = getPaymentBySessionId(sessionId);
         if (payment.getStatus().getName().equals(PAID_PAYMENT_STATUS)) {
@@ -230,7 +229,6 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
-    @Transactional
     public PaymentDto cancelPaymentAndBooking(String sessionId) {
         Payment payment = getPaymentBySessionId(sessionId);
         checkPaymentStatus(payment, PENDING_PAYMENT_STATUS);
@@ -258,7 +256,6 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
-    @Transactional
     public List<PaymentInfoDto> findAllPayments() {
         return paymentRepository.findAll().stream()
                 .map(paymentMapper::toInfoDto)
@@ -266,7 +263,6 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
-    @Transactional
     public List<PaymentInfoDto> findPaymentsByUserEmail(String email) {
         return paymentRepository.findPaymentByBookingUserEmail(email).stream()
                 .map(paymentMapper::toInfoDto)

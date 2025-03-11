@@ -1,6 +1,5 @@
 package org.example.bookingapplication.model.booking;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -11,15 +10,17 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
-import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 import org.example.bookingapplication.model.accommodation.Accommodation;
 import org.example.bookingapplication.model.user.User;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
-@Data
+@Getter
+@Setter
 @EqualsAndHashCode(exclude = {"accommodation", "user", "status"})
 @ToString(exclude = {"accommodation", "user", "status"})
 @Entity
@@ -41,8 +42,6 @@ public class Booking {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "booking_status_id", nullable = false)
     private BookingStatus status;
-    @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
-    @Column(name = "is_deleted",nullable = false)
     private boolean isDeleted = false;
 }

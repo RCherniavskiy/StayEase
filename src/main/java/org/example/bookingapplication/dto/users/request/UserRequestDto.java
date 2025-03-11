@@ -1,6 +1,6 @@
 package org.example.bookingapplication.dto.users.request;
 
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import org.example.bookingapplication.validation.EmailValues;
 import org.example.bookingapplication.validation.PasswordValues;
@@ -8,14 +8,14 @@ import org.example.bookingapplication.validation.PasswordValues;
 @Data
 public class UserRequestDto {
     @EmailValues
-    @NotNull
+    @NotBlank
     private String email;
     @PasswordValues
     private String password;
     @PasswordValues
     private String repeatPassword;
-    @NotNull
+    @NotBlank
     private String firstName;
-    @NotNull
+    @NotBlank
     private String lastName;
 }

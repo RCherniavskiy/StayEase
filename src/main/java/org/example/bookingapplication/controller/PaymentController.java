@@ -19,8 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping(value = "/payments")
 @RequiredArgsConstructor
-public class
-        PaymentController {
+public class PaymentController {
     private final PaymentService paymentService;
 
     @PostMapping("/{id}")

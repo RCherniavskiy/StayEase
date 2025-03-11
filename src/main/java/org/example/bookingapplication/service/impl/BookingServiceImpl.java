@@ -30,6 +30,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class BookingServiceImpl implements BookingService {
     private static final Long DONT_HAVE_AVAILABLE_VALUE = 0L;
     private static final BookingStatus.BookingStatusName PENDING_STATUS
@@ -45,21 +46,19 @@ public class BookingServiceImpl implements BookingService {
     private final BookingBot bookingBot;
 
     @Override
-    @Transactional
     public BookingDto save(BookingRequestDto requestDto, String email) {
         Booking booking = bookingMapper.toModelWithoutStatusAndUser(requestDto);
         isCheckDateValid(booking.getCheckDates());
         setAccommodationIfIsFree(booking, requestDto);
         setUserToBooking(booking, email);
         setBookingStatusToBooking(booking, PENDING_STATUS);
-        Booking savedBooking = bookingRepository.save(booking);
+        bookingRepository.save(booking);
         String message = NotificationConfigurator.bookingCreated(booking);
         bookingBot.sendMessage(email, message);
-        return bookingMapper.toDto(savedBooking);
+        return bookingMapper.toDto(booking);
     }
 
     @Override
-    @Transactional
     public BookingDto cancel(Long id, String email) {
         Booking booking = getByIdIfUserHavePermission(id, email);
         checkBookingStatus(booking, PENDING_STATUS);
@@ -71,7 +70,6 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    @Transactional
     public BookingDto updateInfo(Long id, BookingRequestDto requestDto, String email) {
         Booking booking = getByIdIfUserHavePermission(id, email);
         CheckDate checkDate = checkDateMapper.toModel(requestDto.getCheckDates());
@@ -86,13 +84,11 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    @Transactional
     public BookingDto getById(Long id, String email) {
         return bookingMapper.toDto(getByIdIfUserHavePermission(id, email));
     }
 
     @Override
-    @Transactional
     public List<BookingDto> findAllBookings(Pageable pageable) {
         return bookingRepository.findAll(pageable).stream()
                 .map(bookingMapper::toDto)
@@ -100,7 +96,6 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    @Transactional
     public List<BookingDto> findByUserEmail(String email, Pageable pageable) {
         return bookingRepository.findAllByUser_Email(email, pageable).stream()
                 .map(bookingMapper::toDto)
