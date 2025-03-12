@@ -1,5 +1,6 @@
 package org.example.bookingapplication.model.accommodation;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -42,15 +43,17 @@ public class Accommodation {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "size_type_id", nullable = false)
     private SizeType size;
-    @ManyToMany()
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "accommodations_amenity_types",
             joinColumns = @JoinColumn(name = "accommodation_id"),
             inverseJoinColumns = @JoinColumn(name = "amenity_type_id")
     )
     private Set<AmenityType> amenities;
+    @Column(nullable = false)
     private BigDecimal dailyRate;
     @OneToMany(mappedBy = "accommodation")
     private Set<Booking> bookings;
+    @Column(nullable = false)
     private boolean isDeleted = false;
 }

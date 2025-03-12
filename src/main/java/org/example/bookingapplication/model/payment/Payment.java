@@ -1,5 +1,6 @@
 package org.example.bookingapplication.model.payment;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -35,8 +36,12 @@ public class Payment {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "booking_id", nullable = false)
     private Booking booking;
+    @Column(nullable = false)
     private String sessionUrl;
+    @Column(nullable = false)
     private String sessionId;
+    @Column(nullable = false)
     private BigDecimal amount;
+    @Column(nullable = false)
     private boolean isDeleted = false;
 }

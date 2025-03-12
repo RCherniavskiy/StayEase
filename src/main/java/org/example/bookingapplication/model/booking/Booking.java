@@ -1,5 +1,6 @@
 package org.example.bookingapplication.model.booking;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -42,6 +43,8 @@ public class Booking {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "booking_status_id", nullable = false)
     private BookingStatus status;
+    @Column(nullable = false)
     private LocalDateTime createdAt;
+    @Column(nullable = false)
     private boolean isDeleted = false;
 }

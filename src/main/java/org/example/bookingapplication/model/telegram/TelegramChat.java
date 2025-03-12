@@ -1,5 +1,6 @@
 package org.example.bookingapplication.model.telegram;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -31,6 +32,8 @@ public class TelegramChat {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false, unique = true)
     private User user;
+    @Column(nullable = false, unique = true)
     private Long chatId;
+    @Column(nullable = false)
     private boolean isDeleted = false;
 }
