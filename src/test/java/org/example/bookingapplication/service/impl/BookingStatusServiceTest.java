@@ -31,6 +31,7 @@ class BookingStatusServiceTest {
     @Test
     @DisplayName("Find all booking status with exist data")
     void findAll_findExistData_ReturnTwoObjects() {
+        // Given: Creation of test data
         BookingStatus bookingStatus1 = BookingStatusSampleUtil
                 .createSampleBookingStatus(1L, BookingStatus.BookingStatusName.CANCELED);
         BookingStatus bookingStatus2 = BookingStatusSampleUtil
@@ -46,12 +47,15 @@ class BookingStatusServiceTest {
         when(bookingStatusMapper.toDto(bookingStatus1)).thenReturn(bookingStatusDto1);
         when(bookingStatusMapper.toDto(bookingStatus2)).thenReturn(bookingStatusDto2);
 
+        // When: Click on the method that is being tested
         List<BookingStatusDto> result = bookingStatusService.findAll();
 
+        // Then: Checking the obtained result
         assertEquals(2, result.size());
         assertEquals(bookingStatusDto1, result.get(0));
         assertEquals(bookingStatusDto2, result.get(1));
 
+        // Verify: Verification of click methods
         verify(bookingStatusRepository, times(1)).findAll();
         verify(bookingStatusMapper, times(1)).toDto(bookingStatus1);
         verify(bookingStatusMapper, times(1)).toDto(bookingStatus2);

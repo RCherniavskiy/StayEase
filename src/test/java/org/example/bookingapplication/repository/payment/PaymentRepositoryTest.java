@@ -3,7 +3,6 @@ package org.example.bookingapplication.repository.payment;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import jakarta.transaction.Transactional;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
@@ -57,7 +56,6 @@ class PaymentRepositoryTest {
 
     @Test
     @DisplayName("Find payment by session id with non exist data")
-    @Transactional
     void findPaymentBySessionId_findNotExistPayment_ReturnEmptyOptional() {
         String testSessionId = "testNotExistSessionId";
         Optional<Payment> paymentBySessionId =
@@ -67,7 +65,6 @@ class PaymentRepositoryTest {
 
     @Test
     @DisplayName("Find payment by session id with exist data")
-    @Transactional
     void findPaymentBySessionId_findExistPayment_ReturnPayment() {
         String testSessionId = "testSessionId1";
         Optional<Payment> paymentBySessionId =
@@ -79,7 +76,6 @@ class PaymentRepositoryTest {
 
     @Test
     @DisplayName("Find payment by bookingId with non exist data")
-    @Transactional
     void findPaymentByBookingId_findNonExistPayment_ReturnEmptyOptional() {
         Long nonExistBookingId = -1L;
         Optional<Payment> paymentByBookingId =
@@ -89,7 +85,6 @@ class PaymentRepositoryTest {
 
     @Test
     @DisplayName("Find payment by bookingId with exist data")
-    @Transactional
     void findPaymentByBookingId_findExistPayment_ReturnPayment() {
         Long existBookingId = 1L;
         Optional<Payment> paymentByBookingId =
@@ -101,7 +96,6 @@ class PaymentRepositoryTest {
 
     @Test
     @DisplayName("Find payments by user email with non exist data")
-    @Transactional
     void findPaymentByBookingUserEmail_findNonExistPayment_ReturnEmptyList() {
         String nonExistEmail = "nonExistEmail@i.com";
         List<Payment> paymentsByBookingUserEmail =
@@ -111,7 +105,6 @@ class PaymentRepositoryTest {
 
     @Test
     @DisplayName("Find payments by user email with exist data")
-    @Transactional
     void findPaymentByBookingUserEmail_findExistPayment_ReturnListOfPayment() {
         String existEmail = "testUser1@testmail.com";
         List<Payment> paymentsByBookingUserEmail =
@@ -125,7 +118,6 @@ class PaymentRepositoryTest {
 
     @Test
     @DisplayName("Find payments by bookingId and status with non exist data")
-    @Transactional
     void findAllByBookingIdInAndStatus_Name_findNonExistPayment_ReturnEmptyList() {
         List<Long> nonExistBookingIds = List.of(-1L, -2L);
         List<Payment> paymentsByBookingIdAndStatus =
@@ -136,7 +128,6 @@ class PaymentRepositoryTest {
 
     @Test
     @DisplayName("Find payments by bookingId and status with exist data")
-    @Transactional
     void findAllByBookingIdInAndStatus_Name_findExistPayment_ReturnListWithOnePayment() {
         List<Long> existBookingIds = List.of(1L, 2L);
         List<Payment> paymentsByBookingIdAndStatus =

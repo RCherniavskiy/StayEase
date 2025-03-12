@@ -31,13 +31,17 @@ class AddressServiceTest {
     @Test
     @DisplayName("Save valid address")
     void save_saveValidData_ReturnSavedAddress() {
+        // Given: A valid address request DTO and an expected address entity
         AddressRequestDto requestDto = AddressSampleUtil.createSampleAddressRequestDto(1L);
         Address address = AddressSampleUtil.createSampleAddress(1L);
 
         when(addressMapper.toModel(requestDto)).thenReturn(address);
         when(addressRepository.save(address)).thenReturn(address);
 
+        // When: Calling the save method
         Address result = addressService.save(requestDto);
+
+        // Then: Verify that the address is correctly saved and returned
         assertNotNull(result);
         assertEquals(address, result);
 

@@ -31,6 +31,7 @@ class AccommodationTypeServiceTest {
     @Test
     @DisplayName("Find all accommodation types with exist data")
     void findAll_findExistData_ReturnTwoObjects() {
+        // Given: There are two accommodation types in the database
         AccommodationType accommodationType1 = AccommodationTypeSampleUtil
                 .createSampleAccommodationType(1L, AccommodationType.AccommodationTypeName.HOSTEL);
         AccommodationType accommodationType2 = AccommodationTypeSampleUtil
@@ -47,7 +48,10 @@ class AccommodationTypeServiceTest {
         when(accommodationTypeMapper.toDto(accommodationType1)).thenReturn(accommodationTypeDto1);
         when(accommodationTypeMapper.toDto(accommodationType2)).thenReturn(accommodationTypeDto2);
 
+        // When: Calling the `findAll()` method
         List<AccommodationTypeDto> result = accommodationTypeService.findAll();
+
+        // Then: Verify that the result matches expectations
         assertEquals(2, result.size());
         assertEquals(accommodationTypeDto1, result.get(0));
         assertEquals(accommodationTypeDto2, result.get(1));

@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import jakarta.transaction.Transactional;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
@@ -60,7 +59,6 @@ class TelegramChatRepositoryTest {
 
     @Test
     @DisplayName("Find telegram chat by email with exist data")
-    @Transactional
     void getTelegramChatByUserEmail_findExitChat_ReturnChat() {
         String existEmail = "testUser1@testmail.com";
         Optional<TelegramChat> telegramChatByUserEmail =
@@ -72,7 +70,6 @@ class TelegramChatRepositoryTest {
 
     @Test
     @DisplayName("Find telegram chats by admin role with exist data")
-    @Transactional
     void findAllByUser_Roles_Name_findExistChats_ReturnListOfChat() {
         List<TelegramChat> allByUserRolesName =
                 telegramChatRepository.findAllByUser_Roles_Name(ADMIN_ROLE_NAME);
@@ -87,7 +84,6 @@ class TelegramChatRepositoryTest {
 
     @Test
     @DisplayName("Find telegram chats by customer role with exist data")
-    @Transactional
     void findAllByUser_Roles_Name_findExitChats_ReturnListOfChats() {
         List<TelegramChat> allByUserRolesName =
                 telegramChatRepository.findAllByUser_Roles_Name(CUSTOMER_ROLE_NAME);

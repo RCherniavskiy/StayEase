@@ -3,7 +3,6 @@ package org.example.bookingapplication.repository.user;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import jakarta.transaction.Transactional;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Optional;
@@ -42,7 +41,6 @@ class UserRepositoryTest {
 
     @Test
     @DisplayName("Find exist user by email")
-    @Transactional
     void findUserByEmail_findExistUserByEmail_ReturnUser() {
         String existEmail = "testUser1@testmail.com";
         Optional<User> userByEmail = userRepository.findUserByEmail(existEmail);
@@ -53,7 +51,6 @@ class UserRepositoryTest {
 
     @Test
     @DisplayName("Find non exist user by email")
-    @Transactional
     void findUserByEmail_findNonExistUserByEmail_ReturnEmptyOptional() {
         String nonExistEmail = "nonExistUserEmail@i.com";
         Optional<User> userByEmail = userRepository.findUserByEmail(nonExistEmail);
@@ -62,7 +59,6 @@ class UserRepositoryTest {
 
     @Test
     @DisplayName("Find non exist user by email ")
-    @Transactional
     void findUserByEmailWithRoles_findNonExistUserByEmail_ReturnEmptyOptional() {
         String nonExistEmail = "nonExistUserEmail@i.com";
         Optional<User> userByEmail = userRepository.findUserByEmailWithRoles(nonExistEmail);
@@ -71,7 +67,6 @@ class UserRepositoryTest {
 
     @Test
     @DisplayName("Find non exist user by email ")
-    @Transactional
     void findUserByEmailWithRoles_findNonExistUserByEmail_ReturnUser() {
         String existEmail = "testUser1@testmail.com";
         Optional<User> userByEmail = userRepository.findUserByEmailWithRoles(existEmail);

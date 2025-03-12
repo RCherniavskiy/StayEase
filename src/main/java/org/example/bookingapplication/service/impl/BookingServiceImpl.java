@@ -4,6 +4,7 @@ import jakarta.transaction.Transactional;
 import java.time.LocalDate;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.example.bookingapplication.dto.bookings.request.BookingRequestDto;
 import org.example.bookingapplication.dto.bookings.responce.BookingDto;
 import org.example.bookingapplication.exception.booking.BookingInfoException;
@@ -28,6 +29,7 @@ import org.example.bookingapplication.telegram.util.NotificationConfigurator;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -53,8 +55,8 @@ public class BookingServiceImpl implements BookingService {
         setUserToBooking(booking, email);
         setBookingStatusToBooking(booking, PENDING_STATUS);
         bookingRepository.save(booking);
-        String message = NotificationConfigurator.bookingCreated(booking);
-        bookingBot.sendMessage(email, message);
+        sendNotificationSafe(() -> bookingBot.sendMessage(
+                email, NotificationConfigurator.bookingCreated(booking)));
         return bookingMapper.toDto(booking);
     }
 
@@ -64,8 +66,8 @@ public class BookingServiceImpl implements BookingService {
         checkBookingStatus(booking, PENDING_STATUS);
         setBookingStatusToBooking(booking, CANCELED_STATUS);
         bookingRepository.save(booking);
-        String message = NotificationConfigurator.bookingCancelled(booking);
-        bookingBot.sendMessage(email, message);
+        sendNotificationSafe(() -> bookingBot.sendMessage(
+                email, NotificationConfigurator.bookingCancelled(booking)));
         return bookingMapper.toDto(booking);
     }
 
@@ -78,8 +80,8 @@ public class BookingServiceImpl implements BookingService {
         isAccommodationFree(requestDto.getAccommodationId(), checkDate, DONT_HAVE_AVAILABLE_VALUE);
         bookingMapper.setUpdateInfoToBooking(booking, requestDto);
         bookingRepository.save(booking);
-        String message = NotificationConfigurator.bookingUpdated(booking);
-        bookingBot.sendMessage(email, message);
+        sendNotificationSafe(() -> bookingBot.sendMessage(
+                email, NotificationConfigurator.bookingUpdated(booking)));
         return bookingMapper.toDto(booking);
     }
 
@@ -168,6 +170,14 @@ public class BookingServiceImpl implements BookingService {
                 || checkInDate.equals(checkOutDate)
                 || checkInDate.isAfter(checkOutDate)) {
             throw new InvalidDateException("Invalid check in date ");
+        }
+    }
+
+    private void sendNotificationSafe(Runnable notificationAction) {
+        try {
+            notificationAction.run();
+        } catch (Exception e) {
+            log.error("Error sending notification: ", e);
         }
     }
 }

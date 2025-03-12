@@ -61,12 +61,14 @@ class PaymentServiceTest {
     @Test
     @DisplayName("Create checkout session with not valid booking status")
     void createPaymentCheckoutSession_createPaymentSessionWithNotValidStatus_throwException() {
+        // Given: A user and a booking with status CANCELED
         User sampleUser = UserSampleUtil.createSampleUser(1L);
         Booking sampleBooking = BookingSampleUtil.createSampleBooking(1L);
         sampleBooking.getStatus().setName(BookingStatus.BookingStatusName.CANCELED);
 
         when(bookingRepository.findById(1L)).thenReturn(Optional.of(sampleBooking));
 
+        // When & Then: Expect an exception when trying to create a checkout session
         assertThrows(CantPaidBookingException.class,
                 () -> paymentService.createPaymentCheckoutSession(1L, sampleUser.getEmail()));
 
@@ -77,12 +79,14 @@ class PaymentServiceTest {
     @Test
     @DisplayName("Create checkout session with not valid user")
     void createPaymentCheckoutSession_createPaymentSessionWithNotValidUser_throwException() {
+        // Given: A user with an invalid email and a booking
         User sampleUser = UserSampleUtil.createSampleUser(1L);
         sampleUser.setEmail("not valid email");
         Booking sampleBooking = BookingSampleUtil.createSampleBooking(1L);
 
         when(bookingRepository.findById(1L)).thenReturn(Optional.of(sampleBooking));
 
+        // When & Then: Expect an exception due to lack of user permissions
         assertThrows(UserDontHavePermissions.class,
                 () -> paymentService.createPaymentCheckoutSession(1L, sampleUser.getEmail()));
 
@@ -93,12 +97,14 @@ class PaymentServiceTest {
     @Test
     @DisplayName("Create checkout session with not valid payment status")
     void createPaymentCheckoutSession_createWithNotValidPaymentStatus_throwException() {
+        // Given: A payment with status CANCEL
         Payment samplePayment = PaymentSampleUtil.createSamplePayment(1L);
         samplePayment.getStatus().setName(PaymentStatus.PaymentStatusName.CANCEL);
 
         when(bookingRepository.findById(1L)).thenReturn(Optional.of(samplePayment.getBooking()));
         when(paymentRepository.findPaymentByBookingId(1L)).thenReturn(Optional.of(samplePayment));
 
+        // When & Then: Expect an exception due to the inability to pay for the booking
         assertThrows(CantPaidBookingException.class,
                 () -> paymentService.createPaymentCheckoutSession(
                         1L, samplePayment.getBooking().getUser().getEmail()));
@@ -111,14 +117,17 @@ class PaymentServiceTest {
     @Test
     @DisplayName("Create checkout session with exist payment")
     void createPaymentCheckoutSession_createPaymentSessionWithExistValidPayment_returnUrl() {
+        // Given: An existing payment with a valid status
         Payment samplePayment = PaymentSampleUtil.createSamplePayment(1L);
 
         when(bookingRepository.findById(1L)).thenReturn(Optional.of(samplePayment.getBooking()));
         when(paymentRepository.findPaymentByBookingId(1L)).thenReturn(Optional.of(samplePayment));
 
+        // When: Call the method to create a checkout session
         String result = paymentService.createPaymentCheckoutSession(
                 1L, samplePayment.getBooking().getUser().getEmail());
 
+        // Then: Verify the returned URL is not null and matches the expected session URL
         assertNotNull(result);
         assertEquals(samplePayment.getSessionUrl(), result);
 
@@ -130,6 +139,7 @@ class PaymentServiceTest {
     @Test
     @DisplayName("Success successes payment")
     void successPayment_successSuccessPayment_returnPaidPayment() {
+        // Given: A payment with status PAID and a corresponding DTO
         Payment samplePayment = PaymentSampleUtil.createSamplePayment(1L);
         samplePayment.getStatus().setName(PaymentStatus.PaymentStatusName.PAID);
         PaymentDto samplePaymentDto = PaymentSampleUtil.createSamplePaymentDto(1L);
@@ -138,8 +148,11 @@ class PaymentServiceTest {
         when(paymentRepository.findPaymentBySessionId(samplePayment.getSessionId()))
                 .thenReturn(Optional.of(samplePayment));
         when(paymentMapper.toDto(samplePayment)).thenReturn(samplePaymentDto);
+
+        // When: Call the method to mark the payment as successful
         PaymentDto result = paymentService.successPayment(samplePayment.getSessionId());
 
+        // Then: Verify the returned DTO is not null and matches the expected DTO
         assertNotNull(result);
         assertEquals(samplePaymentDto, result);
 
@@ -151,21 +164,26 @@ class PaymentServiceTest {
     @Test
     @DisplayName("Success payment with not valid session id")
     void successPayment_successPaymentWithNotValidSessionId_ThrowException() {
+        // Given: A non-valid session ID
         String nonValidSessionId = "nonValidSessionId";
 
         when(paymentRepository.findPaymentBySessionId(nonValidSessionId))
                 .thenReturn(Optional.empty());
 
+        // When & Then: Expect an exception when trying
+        // to process payment with an invalid session ID
         assertThrows(EntityNotFoundException.class,
                 () -> paymentService.successPayment(nonValidSessionId));
 
-        verify(paymentRepository, times(1)).findPaymentBySessionId(nonValidSessionId);
+        verify(paymentRepository, times(1)).findPaymentBySessionId(
+                nonValidSessionId);
         verifyNoMoreInteractions(bookingRepository, paymentRepository, paymentMapper);
     }
 
     @Test
     @DisplayName("Find all payment with valid data")
     void findAllPayments_findAllPaymentsWithValidData_returnPaymentsList() {
+        // Given: A list of sample payments and their corresponding DTOs
         Payment samplePayment1 = PaymentSampleUtil.createSamplePayment(1L);
         Payment samplePayment2 = PaymentSampleUtil.createSamplePayment(2L);
         PaymentInfoDto samplePaymentDto1 = PaymentSampleUtil.createSamplePaymentInfoDto(1L);
@@ -175,8 +193,10 @@ class PaymentServiceTest {
         when(paymentMapper.toInfoDto(samplePayment1)).thenReturn(samplePaymentDto1);
         when(paymentMapper.toInfoDto(samplePayment2)).thenReturn(samplePaymentDto2);
 
+        // When: Call the method to retrieve all payments
         List<PaymentInfoDto> result = paymentService.findAllPayments();
 
+        // Then: Verify the size of the result and that it matches the expected list
         assertEquals(2, result.size());
         assertEquals(List.of(samplePaymentDto1, samplePaymentDto2), result);
 
@@ -189,6 +209,7 @@ class PaymentServiceTest {
     @Test
     @DisplayName("Find all payment by user email with valid data")
     void findPaymentsByUserEmail_findUserPaymentsWithValidData_returnPaymentsList() {
+        // Given: A user's email and their associated payments with corresponding DTOs
         Payment samplePayment1 = PaymentSampleUtil.createSamplePayment(1L);
         Payment samplePayment2 = PaymentSampleUtil.createSamplePayment(2L);
         PaymentInfoDto samplePaymentDto1 = PaymentSampleUtil.createSamplePaymentInfoDto(1L);
@@ -200,8 +221,10 @@ class PaymentServiceTest {
         when(paymentMapper.toInfoDto(samplePayment1)).thenReturn(samplePaymentDto1);
         when(paymentMapper.toInfoDto(samplePayment2)).thenReturn(samplePaymentDto2);
 
+        // When: Call the method to retrieve payments by user email
         List<PaymentInfoDto> result = paymentService.findPaymentsByUserEmail(email);
 
+        // Then: Verify the size of the result and that it matches the expected list
         assertEquals(2, result.size());
         assertEquals(List.of(samplePaymentDto1, samplePaymentDto2), result);
 

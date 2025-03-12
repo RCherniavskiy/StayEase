@@ -62,6 +62,7 @@ class BookingServiceTest {
     @Test
     @DisplayName("Save booking with not valid check dates")
     void save_saveBookingWithValidData_ReturnBookingDto() {
+        // Given - Preparing test data
         BookingRequestDto requestDto = BookingSampleUtil.createSampleBookingRequestDto();
         Booking booking = BookingSampleUtil.createSampleBooking(1L);
         Accommodation accommodation = AccommodationSampleUtil.getAccommodationModel(1L);
@@ -84,8 +85,10 @@ class BookingServiceTest {
         when(bookingRepository.save(booking)).thenReturn(booking);
         when(bookingMapper.toDto(booking)).thenReturn(responseDto);
 
+        // When - Executing the method under test
         BookingDto result = bookingService.save(requestDto, booking.getUser().getEmail());
 
+        // Then - Verifying the result
         assertNotNull(result);
         assertEquals(responseDto, result);
 
@@ -117,6 +120,7 @@ class BookingServiceTest {
     @Test
     @DisplayName("Save booking with not valid accommodation id data")
     void save_saveBookingWithNotValidAccommodationId_ThrowException() {
+        // Given - Preparing test data
         BookingRequestDto requestDto = BookingSampleUtil.createSampleBookingRequestDto();
         requestDto.setAccommodationId(-1L);
         Booking booking = BookingSampleUtil.createSampleBooking(1L);
@@ -125,6 +129,7 @@ class BookingServiceTest {
         when(accommodationRepository.findById(requestDto.getAccommodationId()))
                 .thenReturn(Optional.empty());
 
+        // When & Then - Asserting that an exception is thrown
         assertThrows(EntityNotFoundException.class,
                 () -> bookingService.save(requestDto, booking.getUser().getEmail()));
 
@@ -144,6 +149,7 @@ class BookingServiceTest {
     @Test
     @DisplayName("Save booking with other booking in this day data")
     void save_saveBookingWithOtherBookings_ThrowException() {
+        // Given - Preparing test data
         BookingRequestDto requestDto = BookingSampleUtil.createSampleBookingRequestDto();
         Booking booking = BookingSampleUtil.createSampleBooking(1L);
         Accommodation accommodation = AccommodationSampleUtil.getAccommodationModel(1L);
@@ -159,9 +165,11 @@ class BookingServiceTest {
                 booking.getCheckDates().getCheckOutDate())
         ).thenReturn(2L);
 
+        // When & Then - Expecting an exception
         assertThrows(EntityAlreadyExistsException.class,
                 () -> bookingService.save(requestDto, booking.getUser().getEmail()));
 
+        // Verifying interactions
         verify(bookingMapper, times(1)).toModelWithoutStatusAndUser(requestDto);
         verify(accommodationRepository, times(1)).findById(requestDto.getAccommodationId());
         verify(checkDateMapper, times(1)).toModel(requestDto.getCheckDates());
@@ -184,6 +192,7 @@ class BookingServiceTest {
     @Test
     @DisplayName("Save booking with not valid user email")
     void save_saveBookingWithNotValidEmailData_ThrowException() {
+        // Given - Preparing test data
         BookingRequestDto requestDto = BookingSampleUtil.createSampleBookingRequestDto();
         Booking booking = BookingSampleUtil.createSampleBooking(1L);
         Accommodation accommodation = AccommodationSampleUtil.getAccommodationModel(1L);
@@ -201,9 +210,11 @@ class BookingServiceTest {
         when(userRepository.findUserByEmail(booking.getUser().getEmail()))
                 .thenReturn(Optional.empty());
 
+        // When & Then - Expecting an exception
         assertThrows(EntityNotFoundException.class,
                 () -> bookingService.save(requestDto, booking.getUser().getEmail()));
 
+        // Verifying interactions
         verify(bookingMapper, times(1)).toModelWithoutStatusAndUser(requestDto);
         verify(accommodationRepository, times(1)).findById(requestDto.getAccommodationId());
         verify(checkDateMapper, times(1)).toModel(requestDto.getCheckDates());
@@ -228,6 +239,7 @@ class BookingServiceTest {
     @Test
     @DisplayName("Save booking with not valid check dates")
     void save_saveBookingWithNotValidCheckDate_ThrowException() {
+        // Given - Preparing test data with incorrect check-in and check-out dates
         BookingRequestDto requestDto = BookingSampleUtil.createSampleBookingRequestDto();
 
         CheckDateRequestDto notValidCheckDateDto = new CheckDateRequestDto();
@@ -244,9 +256,11 @@ class BookingServiceTest {
 
         when(bookingMapper.toModelWithoutStatusAndUser(requestDto)).thenReturn(booking);
 
+        // When & Then - Expecting an exception
         assertThrows(InvalidDateException.class,
                 () -> bookingService.save(requestDto, booking.getUser().getEmail()));
 
+        // Verifying interactions
         verify(bookingMapper, times(1)).toModelWithoutStatusAndUser(requestDto);
 
         verifyNoMoreInteractions(
@@ -262,6 +276,7 @@ class BookingServiceTest {
     @Test
     @DisplayName("Cancel booking with valid data")
     void cancel_cancelBookingWithValidData_ReturnBookingDto() {
+        // Given: Creating test data
         Booking booking = BookingSampleUtil.createSampleBooking(1L);
         BookingStatus canceledBookingStatus = BookingStatusSampleUtil
                 .createSampleBookingStatus(3L, BookingStatus.BookingStatusName.CANCELED);
@@ -279,8 +294,11 @@ class BookingServiceTest {
 
         booking.setStatus(BookingStatusSampleUtil
                 .createSampleBookingStatus(2L, BookingStatus.BookingStatusName.PENDING));
+
+        // When: call the cancel method
         BookingDto result = bookingService.cancel(1L, booking.getUser().getEmail());
 
+        // Then: check result and interactions
         assertNotNull(result);
         assertEquals(responseDto, result);
 
@@ -303,10 +321,12 @@ class BookingServiceTest {
     @Test
     @DisplayName("Cancel booking with not valid booking id")
     void cancel_cancelBookingWithNotValidId_ThrowException() {
+        // Given: non-existent booking ID
         Booking booking = BookingSampleUtil.createSampleBooking(1L);
 
         when(bookingRepository.findById(-1L)).thenReturn(Optional.empty());
 
+        // When and Then: Call the cancel method and check if an exception is thrown
         assertThrows(EntityNotFoundException.class,
                 () -> bookingService.cancel(-1L, booking.getUser().getEmail()));
 
@@ -324,9 +344,11 @@ class BookingServiceTest {
     @Test
     @DisplayName("Cancel booking with not valid user email")
     void cancel_cancelBookingWithNotValidUserEmail_ThrowException() {
+        // Given: existing booking, but invalid user email
         Booking booking = BookingSampleUtil.createSampleBooking(1L);
         when(bookingRepository.findById(1L)).thenReturn(Optional.of(booking));
 
+        // When and Then: Call the cancel method and check if an exception is thrown
         assertThrows(UserDontHavePermissions.class,
                 () -> bookingService.cancel(1L, "not found email"));
 
@@ -344,6 +366,7 @@ class BookingServiceTest {
     @Test
     @DisplayName("Cancel booking with not valid booking status")
     void cancel_cancelBookingWithNotValidBookingStatus_ThrowException() {
+        // Given
         Booking booking = BookingSampleUtil.createSampleBooking(1L);
         BookingStatus confirmedBookingStatus = BookingStatusSampleUtil
                 .createSampleBookingStatus(3L, BookingStatus.BookingStatusName.CONFIRMED);
@@ -351,6 +374,7 @@ class BookingServiceTest {
 
         when(bookingRepository.findById(1L)).thenReturn(Optional.of(booking));
 
+        // When & Then
         assertThrows(BookingInfoException.class,
                 () -> bookingService.cancel(1L, booking.getUser().getEmail()));
 
@@ -369,6 +393,7 @@ class BookingServiceTest {
     @Test
     @DisplayName("Get booking by id with valid data")
     void getById_GetBookingByIdWithValidData_ReturnBooking() {
+        // Given
         Booking sampleBooking = BookingSampleUtil.createSampleBooking(1L);
         sampleBooking.setId(1L);
         BookingDto sampleBookingDto = BookingSampleUtil.createSampleBookingDto(1L);
@@ -377,8 +402,10 @@ class BookingServiceTest {
         when(bookingRepository.findById(1L)).thenReturn(Optional.of(sampleBooking));
         when(bookingMapper.toDto(sampleBooking)).thenReturn(sampleBookingDto);
 
+        // When
         BookingDto result = bookingService.getById(1L, sampleBooking.getUser().getEmail());
 
+        // Then
         assertNotNull(result);
         assertEquals(sampleBookingDto, result);
 
@@ -397,8 +424,10 @@ class BookingServiceTest {
     @Test
     @DisplayName("Get booking by id with not valid id")
     void getById_GetBookingByIdWithNotValidId_throwException() {
+        // Given
         when(bookingRepository.findById(-1L)).thenReturn(Optional.empty());
 
+        // When & Then
         assertThrows(EntityNotFoundException.class,
                 () -> bookingService.getById(-1L, "sample@email.com"));
 
@@ -416,11 +445,13 @@ class BookingServiceTest {
     @Test
     @DisplayName("Get booking by id with not valid email")
     void getById_GetBookingByIdWithNotValidEmail_ThrowException() {
+        // Given
         Booking sampleBooking = BookingSampleUtil.createSampleBooking(1L);
         sampleBooking.setId(1L);
 
         when(bookingRepository.findById(1L)).thenReturn(Optional.of(sampleBooking));
 
+        // When & Then
         assertThrows(UserDontHavePermissions.class,
                 () -> bookingService.getById(1L, "dontHave@email.com"));
 
