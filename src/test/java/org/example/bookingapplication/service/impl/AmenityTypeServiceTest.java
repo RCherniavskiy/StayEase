@@ -31,6 +31,7 @@ class AmenityTypeServiceTest {
     @Test
     @DisplayName("Find all amenity types with exist data")
     void findAll_findExistData_ReturnTwoObjects() {
+        // Given: A list of amenity types and their corresponding DTOs
         AmenityType amenityType1 = AmenityTypeSampleUtil
                 .createSampleAmenityType(1L, AmenityType.AmenityTypeName.FREE_WIFI);
         AmenityType amenityType2 = AmenityTypeSampleUtil
@@ -44,8 +45,10 @@ class AmenityTypeServiceTest {
         when(amenityTypeMapper.toDto(amenityType1)).thenReturn(amenityTypeDto1);
         when(amenityTypeMapper.toDto(amenityType2)).thenReturn(amenityTypeDto2);
 
+        // When: Calling the findAll method
         List<AmenityTypeDto> result = amenityTypeService.findAll();
 
+        // Then: Verify the expected output
         assertEquals(2, result.size());
         assertEquals(amenityTypeDto1, result.get(0));
         assertEquals(amenityTypeDto2, result.get(1));

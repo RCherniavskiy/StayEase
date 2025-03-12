@@ -53,6 +53,7 @@ class UserServiceTest {
     @Test
     @DisplayName("Get info about user with valid data")
     void getInfo_getUserInfoWithValidData_ReturnUser() {
+        // Given: A user and their response DTO
         User sampleUser = UserSampleUtil.createSampleUser(1L);
         UserResponseDto sampleUserResponseDto = UserSampleUtil.createSampleUserResponseDto(1L);
 
@@ -60,8 +61,10 @@ class UserServiceTest {
                 .thenReturn(Optional.of(sampleUser));
         when(userMapper.toResponseDto(sampleUser)).thenReturn(sampleUserResponseDto);
 
+        // When: The method to get user info is called
         UserResponseDto result = userService.getInfo(sampleUser.getEmail());
 
+        // Then: Ensure the result is not null and matches the expected DTO
         assertNotNull(result);
         assertEquals(sampleUserResponseDto, result);
 
@@ -73,9 +76,11 @@ class UserServiceTest {
     @Test
     @DisplayName("Get info about user with non valid email")
     void getInfo_getUserInfoWithNonValidEmail_ThrowException() {
+        // Given: An invalid email
         String nonValidEmail = "nonValidEamil@i.com";
         when(userRepository.findUserByEmail(nonValidEmail)).thenReturn(Optional.empty());
 
+        // When & Then: Expect an exception
         assertThrows(EntityNotFoundException.class,
                 () -> userService.getInfo(nonValidEmail));
 
@@ -86,6 +91,7 @@ class UserServiceTest {
     @Test
     @DisplayName("Update info about user with valid data")
     void updateInfo_updateUserInfoWithValidData_ReturnUpdateUser() {
+        // Given: An existing user and new update data
         UserUpdateInfoRequestDto sampleUserUpdateInfoRequestDto = UserSampleUtil
                 .createSampleUserUpdateInfoRequestDto(1L);
         UserResponseDto sampleUserResponseDto = UserSampleUtil.createSampleUserResponseDto(1L);
@@ -106,7 +112,10 @@ class UserServiceTest {
         when(userRepository.save(sampleUser)).thenReturn(sampleUser);
         when(userMapper.toResponseDto(sampleUser)).thenReturn(sampleUserResponseDto);
 
+        // When: The update method is called
         UserResponseDto result = userService.updateInfo(oldEmail, sampleUserUpdateInfoRequestDto);
+
+        // Then: Ensure the result is not null and matches the expected DTO
         assertNotNull(result);
         assertEquals(sampleUserResponseDto, result);
 
@@ -124,12 +133,14 @@ class UserServiceTest {
     @Test
     @DisplayName("Update info about user with non valid email")
     void updateInfo_updateUserInfoWithNonValidEmail_ThrowException() {
+        // Given: A user update request and a non-existing user
         UserUpdateInfoRequestDto sampleUserUpdateInfoRequestDto = UserSampleUtil
                 .createSampleUserUpdateInfoRequestDto(1L);
         User sampleUser = UserSampleUtil.createSampleUser(1L);
 
         when(userRepository.findUserByEmail(sampleUser.getEmail())).thenReturn(Optional.empty());
 
+        // When & Then: Expect an exception when trying to update a non-existing user
         assertThrows(EntityNotFoundException.class, () -> userService
                 .updateInfo(sampleUser.getEmail(), sampleUserUpdateInfoRequestDto));
 
@@ -140,6 +151,7 @@ class UserServiceTest {
     @Test
     @DisplayName("Update info about user with exist email")
     void updateInfo_updateUserInfoWithExistEmail_ThrowException() {
+        // Given: A user update request where the new email already exists
         UserUpdateInfoRequestDto sampleUserUpdateInfoRequestDto = UserSampleUtil
                 .createSampleUserUpdateInfoRequestDto(1L);
         User sampleUser = UserSampleUtil.createSampleUser(1L);
@@ -149,6 +161,7 @@ class UserServiceTest {
         when(userRepository.findUserByEmail(sampleUserUpdateInfoRequestDto.getEmail()))
                 .thenReturn(Optional.of(sampleUser));
 
+        // When & Then: Expect an exception when trying to update to an already existing email
         assertThrows(EntityAlreadyExistsException.class, () -> userService
                 .updateInfo(sampleUser.getEmail(), sampleUserUpdateInfoRequestDto));
 
@@ -161,6 +174,7 @@ class UserServiceTest {
     @Test
     @DisplayName("Register user with valid data")
     void register_registerUserWithValidData_ReturnUser() {
+        // Given: A valid user registration request
         UserRequestDto sampleUserRequestDto = UserSampleUtil.createSampleUserRequestDto(1L);
         User sampleUser = UserSampleUtil.createSampleUser(1L);
 
@@ -177,8 +191,10 @@ class UserServiceTest {
         UserResponseDto sampleUserResponseDto = UserSampleUtil.createSampleUserResponseDto(1L);
         when(userMapper.toResponseDto(sampleUser)).thenReturn(sampleUserResponseDto);
 
+        // When: The user is registered
         UserResponseDto result = userService.register(sampleUserRequestDto);
 
+        // Then: The user is successfully registered and returned
         assertNotNull(result);
         assertEquals(sampleUserResponseDto, result);
 
@@ -193,12 +209,14 @@ class UserServiceTest {
     @Test
     @DisplayName("Register user with exist email")
     void register_registerUserWithExistEmail_ThrowException() {
+        // Given: A sample user request DTO and an existing user in the database
         UserRequestDto sampleUserRequestDto = UserSampleUtil.createSampleUserRequestDto(1L);
         User sampleUser = UserSampleUtil.createSampleUser(1L);
 
         when(userRepository.findUserByEmail(sampleUserRequestDto.getEmail()))
                 .thenReturn(Optional.of(sampleUser));
 
+        // When & Then: Attempting to register should throw an EntityAlreadyExistsException
         assertThrows(EntityAlreadyExistsException.class,
                 () -> userService.register(sampleUserRequestDto));
 
@@ -209,6 +227,7 @@ class UserServiceTest {
     @Test
     @DisplayName("Register user with non valid password")
     void register_registerUserWithNonValidPassword_ThrowException() {
+        // Given: A sample user request DTO with mismatched passwords
         UserRequestDto sampleUserRequestDto = UserSampleUtil.createSampleUserRequestDto(1L);
         sampleUserRequestDto.setRepeatPassword(sampleUserRequestDto.getPassword() + "test");
         User sampleUser = UserSampleUtil.createSampleUser(1L);
@@ -218,6 +237,7 @@ class UserServiceTest {
         when(userMapper.toModelWithoutPasswordAndRoles(sampleUserRequestDto))
                 .thenReturn(sampleUser);
 
+        // When & Then: Attempting to register should throw a PasswordNotValidException
         assertThrows(PasswordNotValidException.class,
                 () -> userService.register(sampleUserRequestDto));
 
@@ -229,6 +249,7 @@ class UserServiceTest {
     @Test
     @DisplayName("Update user password with valid data")
     void updatePassword_updateUserPasswordWithValidData_UpdateUserPassword() {
+        // Given: A sample user and a valid password update request
         User sampleUser = UserSampleUtil.createSampleUser(1L);
         UserUpdatePasswordRequestDto requestDto = UserSampleUtil
                 .createSampleUserUpdatePasswordRequestDto(sampleUser.getPassword());
@@ -239,8 +260,10 @@ class UserServiceTest {
         sampleUser.setPassword(requestDto.getNewPassword());
         when(userRepository.save(sampleUser)).thenReturn(sampleUser);
 
+        // When: Updating the password
         userService.updatePassword(sampleUser.getEmail(), requestDto);
 
+        // Then: The user repository should be called to find and save the user
         verify(userRepository, times(1)).findUserByEmail(sampleUser.getEmail());
         verify(userRepository, times(1)).save(sampleUser);
         verifyNoMoreInteractions(userRepository, userMapper);
@@ -249,6 +272,7 @@ class UserServiceTest {
     @Test
     @DisplayName("Update user password with valid data")
     void updatePassword_updateUserPasswordWithNotValidOldPassword_ThrowException() {
+        // Given: A sample user and an update password request with an invalid old password
         User sampleUser = UserSampleUtil.createSampleUser(1L);
         UserUpdatePasswordRequestDto requestDto = UserSampleUtil
                 .createSampleUserUpdatePasswordRequestDto(sampleUser.getPassword() + "1234");
@@ -257,6 +281,9 @@ class UserServiceTest {
                 .thenReturn(Optional.of(sampleUser));
         when(passwordEncoder.matches(requestDto.getOldPassword(), sampleUser.getPassword()))
                 .thenReturn(false);
+
+        // When & Then: Expect an exception when trying to update
+        // the password with an invalid old password
         assertThrows(PasswordNotValidException.class,
                 () -> userService.updatePassword(sampleUser.getEmail(), requestDto));
 
@@ -267,6 +294,7 @@ class UserServiceTest {
     @Test
     @DisplayName("Update user password with not equals new passwords")
     void updatePassword_updateUserPasswordWithNotValidNewPassword_ThrowException() {
+        // Given: A sample user and an update password request where new passwords do not match
         User sampleUser = UserSampleUtil.createSampleUser(1L);
         UserUpdatePasswordRequestDto requestDto = UserSampleUtil
                 .createSampleUserUpdatePasswordRequestDto(sampleUser.getPassword());
@@ -277,6 +305,7 @@ class UserServiceTest {
         when(passwordEncoder.matches(requestDto.getOldPassword(), sampleUser.getPassword()))
                 .thenReturn(false);
 
+        // When & Then: Expect an exception when new passwords do not match
         assertThrows(PasswordNotValidException.class,
                 () -> userService.updatePassword(sampleUser.getEmail(), requestDto));
 
@@ -287,6 +316,7 @@ class UserServiceTest {
     @Test
     @DisplayName("Update user roles with valid data")
     void updateRoles_updateUserRolesWithValidData_ReturnUser() {
+        // Given: A request to update user roles with valid role names
         UserUpdateRolesRequestDto requestDto = new UserUpdateRolesRequestDto();
         requestDto.setRoleName(ADMIN_ROLE_TYPE);
         User sampleUser = UserSampleUtil.createSampleUser(1L);
@@ -311,8 +341,10 @@ class UserServiceTest {
         when(userRepository.save(sampleUser)).thenReturn(sampleUser);
         when(userMapper.toResponseDto(sampleUser)).thenReturn(sampleUserResponseDto);
 
+        // When: The user roles are updated
         UserResponseDto result = userService.updateRoles(sampleUser.getId(), requestDto);
 
+        // Then: The response should not be null and should match the expected user response DTO
         assertNotNull(result);
         assertEquals(sampleUserResponseDto, result);
 
@@ -330,11 +362,13 @@ class UserServiceTest {
     @Test
     @DisplayName("Update user roles with not valid id")
     void updateRoles_updateUserRolesWithValidId_ReturnUser() {
+        // Given: A request to update user roles with an invalid user ID
         UserUpdateRolesRequestDto requestDto = new UserUpdateRolesRequestDto();
         requestDto.setRoleName(ADMIN_ROLE_TYPE);
 
         when(userRepository.findById(-1L)).thenReturn(Optional.empty());
 
+        // When & Then: Expect an EntityNotFoundException when the user ID is invalid
         assertThrows(EntityNotFoundException.class,
                 () -> userService.updateRoles(-1L, requestDto));
 

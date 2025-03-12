@@ -43,13 +43,17 @@ class TelegramServiceTest {
     @Test
     @DisplayName("Get invite URL to telegram with valid data")
     void getUrl_getInviteToTelegramUrl_returnUrl() {
+        // Given
         String exampleEmail = "email@i.com";
         String exampleToken = "token_1234";
         String expectedResult = "https://t.me/Book1App1Bot?start=" + exampleToken;
 
         when(emailTokenGenerator.encryptEmail("email@i.com")).thenReturn(exampleToken);
 
+        // When
         String result = telegramService.getUrl(exampleEmail);
+
+        // Then
         assertNotNull(result);
         assertEquals(expectedResult, result);
 
@@ -61,6 +65,7 @@ class TelegramServiceTest {
     @Test
     @DisplayName("Authorise telegram user with valid data")
     void auth_authIfUserAuthorize_returnResponseDto() {
+        // Given
         User sampleUser = UserSampleUtil.createSampleUser(1L);
         UserResponseDto sampleUserResponseDto = UserSampleUtil.createSampleUserResponseDto(1L);
         TelegramChat sampleTelegramChat = TelegramChatSampleUtil
@@ -72,7 +77,10 @@ class TelegramServiceTest {
                 .thenReturn(Optional.of(sampleTelegramChat));
         when(userMapper.toResponseDto(sampleUser)).thenReturn(sampleUserResponseDto);
 
+        // When
         UserResponseDto result = telegramService.auth(exampleToken, sampleTelegramChat.getChatId());
+
+        // Then
         assertNotNull(result);
         assertEquals(sampleUserResponseDto, result);
 
@@ -91,6 +99,7 @@ class TelegramServiceTest {
     @Test
     @DisplayName("Authorise telegram new user with valid data")
     void auth_authIfUserNonAuthorize_returnResponseDto() {
+        // Given
         User sampleUser = UserSampleUtil.createSampleUser(1L);
         UserResponseDto sampleUserResponseDto = UserSampleUtil.createSampleUserResponseDto(1L);
         TelegramChat sampleTelegramChat = TelegramChatSampleUtil
@@ -105,7 +114,10 @@ class TelegramServiceTest {
         when(telegramChatRepository.save(sampleTelegramChat)).thenReturn(sampleTelegramChat);
         when(userMapper.toResponseDto(sampleUser)).thenReturn(sampleUserResponseDto);
 
+        // When
         UserResponseDto result = telegramService.auth(exampleToken, sampleTelegramChat.getChatId());
+
+        // Then
         assertNotNull(result);
         assertEquals(sampleUserResponseDto, result);
 
@@ -128,6 +140,7 @@ class TelegramServiceTest {
     @Test
     @DisplayName("Authorise telegram new user with not valid decrypt email")
     void auth_authUserWithNotValidEmail_ThrowException() {
+        // Given
         User sampleUser = UserSampleUtil.createSampleUser(1L);
         String exampleToken = "token_1234";
 
@@ -139,6 +152,7 @@ class TelegramServiceTest {
         TelegramChat sampleTelegramChat = TelegramChatSampleUtil
                 .getSampleTelegramChat(sampleUser, 1234L);
 
+        // When & Then
         assertThrows(EntityNotFoundException.class,
                 () -> telegramService.auth(exampleToken, sampleTelegramChat.getChatId()));
 

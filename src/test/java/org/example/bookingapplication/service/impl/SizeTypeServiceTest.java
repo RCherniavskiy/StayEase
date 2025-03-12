@@ -31,6 +31,7 @@ class SizeTypeServiceTest {
     @Test
     @DisplayName("Find all size type with exist data")
     void findAll_findExistData_ReturnTwoObjects() {
+        // Given: Two size types exist in the database
         SizeType sizeType1 = SizeTypeSampleUtil
                 .createSampleSizeType(1L, SizeType.SizeTypeName.TWO_PEOPLE);
         SizeType sizeType2 = SizeTypeSampleUtil
@@ -44,12 +45,15 @@ class SizeTypeServiceTest {
         when(sizeTypeMapper.toDto(sizeType1)).thenReturn(sizeTypeDto1);
         when(sizeTypeMapper.toDto(sizeType2)).thenReturn(sizeTypeDto2);
 
+        // When: Retrieving all size types
         List<SizeTypeDto> result = sizeTypeService.findAll();
 
+        // Then: The result should contain two elements with correct data
         assertEquals(2, result.size());
         assertEquals(sizeTypeDto1, result.get(0));
         assertEquals(sizeTypeDto2, result.get(1));
 
+        // Verify that the repository and mapper were called the expected number of times
         verify(sizeTypeRepository, times(1)).findAll();
         verify(sizeTypeMapper, times(1)).toDto(sizeType1);
         verify(sizeTypeMapper, times(1)).toDto(sizeType2);

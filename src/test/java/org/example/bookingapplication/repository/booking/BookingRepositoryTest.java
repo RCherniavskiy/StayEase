@@ -3,7 +3,6 @@ package org.example.bookingapplication.repository.booking;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import jakarta.transaction.Transactional;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.time.LocalDate;
@@ -63,7 +62,6 @@ class BookingRepositoryTest {
 
     @Test
     @DisplayName("Find booking by email with 2 bookings")
-    @Transactional
     void findAllByUser_Email_getBookingByValidUserEmail_ReturnBookings() {
         String testEmail = "testUser1@testmail.com";
         Pageable pageable = PageRequest.of(0, 10);
@@ -74,7 +72,6 @@ class BookingRepositoryTest {
 
     @Test
     @DisplayName("Find booking by check in date with non exist data")
-    @Transactional
     void findAllByCheckInDate_getBookingByNonExistCheckInDate_OneBooking() {
         LocalDate nonExistCheckInDate = LocalDate.of(1999, 10, 20);
         BookingStatus.BookingStatusName pending = BookingStatus.BookingStatusName.PENDING;
@@ -85,7 +82,6 @@ class BookingRepositoryTest {
 
     @Test
     @DisplayName("Find booking by check in date with exist data")
-    @Transactional
     void findAllByCheckInDate_getBookingByCheckInDate_OneBooking() {
         LocalDate checkInDate = LocalDate.of(2034, 11, 30);
         BookingStatus.BookingStatusName pending = BookingStatus.BookingStatusName.PENDING;
@@ -97,7 +93,6 @@ class BookingRepositoryTest {
 
     @Test
     @DisplayName("Find booking by check out date with non exist data")
-    @Transactional
     void findAllByCheckOutDate_getBookingByNonExistCheckOutDate_OneBooking() {
         LocalDate nonExistCheckInDate = LocalDate.of(1999, 10, 20);
         BookingStatus.BookingStatusName pending = BookingStatus.BookingStatusName.PENDING;
@@ -108,7 +103,6 @@ class BookingRepositoryTest {
 
     @Test
     @DisplayName("Find booking by check out date with exist data")
-    @Transactional
     void findAllByCheckOutDate_getBookingByCheckCheckOutDate_OneBooking() {
         LocalDate checkOutDate = LocalDate.of(2034, 11, 05);
         BookingStatus.BookingStatusName expired = BookingStatus.BookingStatusName.EXPIRED;
@@ -120,7 +114,6 @@ class BookingRepositoryTest {
 
     @Test
     @DisplayName("Find booking by created at date with exist data")
-    @Transactional
     void findAllByCreatedAtDate_getBookingByCreatedAtDate_OneBooking() {
         LocalDateTime dateTime = LocalDateTime.of(2034, 10, 10, 12, 0,0);
         BookingStatus.BookingStatusName expired = BookingStatus.BookingStatusName.EXPIRED;
@@ -132,7 +125,6 @@ class BookingRepositoryTest {
 
     @Test
     @DisplayName("Find booking by created at date with non exist data")
-    @Transactional
     void findAllByCreatedAtDate_getBookingNonExistByCreatedAtDate_Empty() {
         LocalDateTime dateTime = LocalDateTime.of(1990, 10, 10, 12, 0,0);
         BookingStatus.BookingStatusName expired = BookingStatus.BookingStatusName.EXPIRED;
@@ -143,7 +135,6 @@ class BookingRepositoryTest {
 
     @Test
     @DisplayName("Find booking by created at date with non exist data")
-    @Transactional
     void isDatesAvailableForAccommodation_findWithExistBookings_ReturnCountOne() {
         Long accommodationId = 1L;
         LocalDate checkInDate = LocalDate.of(2034, 11, 30);
@@ -155,7 +146,6 @@ class BookingRepositoryTest {
 
     @Test
     @DisplayName("Find booking by created at date with non exist data")
-    @Transactional
     void isDatesAvailableForAccommodation_findWithNonExistBookings_ReturnCountZero() {
         Long accommodationId = 1L;
         LocalDate checkInDate = LocalDate.of(2031, 11, 30);
