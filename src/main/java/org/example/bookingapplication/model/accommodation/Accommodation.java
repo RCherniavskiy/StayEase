@@ -1,16 +1,7 @@
 package org.example.bookingapplication.model.accommodation;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+
 import java.math.BigDecimal;
 import java.util.Set;
 import lombok.EqualsAndHashCode;
@@ -42,15 +33,17 @@ public class Accommodation {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "size_type_id", nullable = false)
     private SizeType size;
-    @ManyToMany()
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "accommodations_amenity_types",
             joinColumns = @JoinColumn(name = "accommodation_id"),
             inverseJoinColumns = @JoinColumn(name = "amenity_type_id")
     )
     private Set<AmenityType> amenities;
+    @Column(nullable = false)
     private BigDecimal dailyRate;
     @OneToMany(mappedBy = "accommodation")
     private Set<Booking> bookings;
+    @Column(nullable = false)
     private boolean isDeleted = false;
 }
