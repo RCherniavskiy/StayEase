@@ -30,7 +30,7 @@ import org.example.bookingapplication.repository.bookingstatus.BookingStatusRepo
 import org.example.bookingapplication.repository.payment.PaymentRepository;
 import org.example.bookingapplication.repository.paymentstatus.PaymentStatusRepository;
 import org.example.bookingapplication.service.PaymentService;
-import org.example.bookingapplication.telegram.BookingBot;
+import org.example.bookingapplication.telegram.notification.TelegramNotificationService;
 import org.example.bookingapplication.telegram.util.NotificationConfigurator;
 import org.springframework.stereotype.Service;
 
@@ -65,7 +65,7 @@ public class PaymentServiceImpl implements PaymentService {
     private final BookingRepository bookingRepository;
     private final BookingStatusRepository bookingStatusRepository;
     private final BookingMapper bookingMapper;
-    private final BookingBot bookingBot;
+    private final TelegramNotificationService telegramNotificationService;
 
     @Override
     public String createPaymentCheckoutSession(Long id, String email) {
@@ -81,7 +81,7 @@ public class PaymentServiceImpl implements PaymentService {
         Payment payment = createPayment(session, booking);
         paymentRepository.save(payment);
         String message = NotificationConfigurator.paymentInitiated(payment);
-        bookingBot.sendMessage(email, message);
+        telegramNotificationService.sendMessageAsync(email, message);
         return session.getUrl();
     }
 
@@ -191,8 +191,8 @@ public class PaymentServiceImpl implements PaymentService {
         String paymentMessage = NotificationConfigurator.paymentSuccessful(payment);
         String bookingMessage = NotificationConfigurator.bookingConfirmed(payment.getBooking());
         String email = payment.getBooking().getUser().getEmail();
-        bookingBot.sendMessage(email, paymentMessage);
-        bookingBot.sendMessage(email, bookingMessage);
+        telegramNotificationService.sendMessageAsync(email, paymentMessage);
+        telegramNotificationService.sendMessageAsync(email, bookingMessage);
         return paymentMapper.toDto(payment);
     }
 
@@ -243,8 +243,8 @@ public class PaymentServiceImpl implements PaymentService {
         String paymentMessage = NotificationConfigurator.paymentCancelled(payment);
         String bookingMessage = NotificationConfigurator.bookingCancelled(payment.getBooking());
         String email = payment.getBooking().getUser().getEmail();
-        bookingBot.sendMessage(email, paymentMessage);
-        bookingBot.sendMessage(email, bookingMessage);
+        telegramNotificationService.sendMessageAsync(email, paymentMessage);
+        telegramNotificationService.sendMessageAsync(email, bookingMessage);
         return paymentMapper.toDto(payment);
     }
 
