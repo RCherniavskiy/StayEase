@@ -19,7 +19,7 @@ import org.example.bookingapplication.repository.bookingstatus.BookingStatusRepo
 import org.example.bookingapplication.repository.payment.PaymentRepository;
 import org.example.bookingapplication.repository.paymentstatus.PaymentStatusRepository;
 import org.example.bookingapplication.repository.telegramchat.TelegramChatRepository;
-import org.example.bookingapplication.telegram.BookingBot;
+import org.example.bookingapplication.telegram.notification.TelegramNotificationService;
 import org.example.bookingapplication.telegram.util.NotificationConfigurator;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -48,7 +48,7 @@ public class BookingTask {
     private final BookingStatusRepository bookingStatusRepository;
     private final PaymentRepository paymentRepository;
     private final PaymentStatusRepository paymentStatusRepository;
-    private final BookingBot bookingBot;
+    private final TelegramNotificationService telegramNotificationService;
     private final TelegramChatRepository telegramChatRepository;
 
     @Scheduled(cron = "0 0 10 * * *")
@@ -58,7 +58,7 @@ public class BookingTask {
         if (bookingList.isEmpty()) {
             return;
         }
-        bookingList.forEach(booking -> bookingBot.sendMessage(
+        bookingList.forEach(booking -> telegramNotificationService.sendMessageAsync(
                 booking.getUser().getEmail(),
                 NotificationConfigurator.bookingCheckInToday(booking)));
     }
@@ -72,12 +72,12 @@ public class BookingTask {
                 = bookingRepository.findAllByCheckOutDate(today, CONFIRMED_STATUS);
         if (bookingList.isEmpty()) {
             getAdminsEmail().forEach(b ->
-                    bookingBot.sendMessage(b,
+                    telegramNotificationService.sendMessageAsync(b,
                             NotificationConfigurator.nonExpiredBookingsAlert()));
             return;
         }
         updateBookingsStatus(bookingList, EXPIRED_STATUS);
-        bookingList.forEach(booking -> bookingBot.sendMessage(
+        bookingList.forEach(booking -> telegramNotificationService.sendMessageAsync(
                 booking.getUser().getEmail(), NotificationConfigurator.bookingExpired(booking)));
     }
 
@@ -92,7 +92,7 @@ public class BookingTask {
         }
         updateBookingsStatus(bookingList, CANCELED_STATUS);
         cancelPayments(bookingList);
-        bookingList.forEach(booking -> bookingBot.sendMessage(
+        bookingList.forEach(booking -> telegramNotificationService.sendMessageAsync(
                 booking.getUser().getEmail(),
                 NotificationConfigurator.bookingTimeExpired(booking)));
     }

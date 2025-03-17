@@ -24,7 +24,7 @@ import org.example.bookingapplication.repository.booking.BookingRepository;
 import org.example.bookingapplication.repository.bookingstatus.BookingStatusRepository;
 import org.example.bookingapplication.repository.user.UserRepository;
 import org.example.bookingapplication.service.BookingService;
-import org.example.bookingapplication.telegram.BookingBot;
+import org.example.bookingapplication.telegram.notification.TelegramNotificationService;
 import org.example.bookingapplication.telegram.util.NotificationConfigurator;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -45,7 +45,7 @@ public class BookingServiceImpl implements BookingService {
     private final BookingStatusRepository bookingStatusRepository;
     private final BookingMapper bookingMapper;
     private final CheckDateMapper checkDateMapper;
-    private final BookingBot bookingBot;
+    private final TelegramNotificationService telegramNotificationService;
 
     @Override
     public BookingDto save(BookingRequestDto requestDto, String email) {
@@ -55,8 +55,8 @@ public class BookingServiceImpl implements BookingService {
         setUserToBooking(booking, email);
         setBookingStatusToBooking(booking, PENDING_STATUS);
         bookingRepository.save(booking);
-        sendNotificationSafe(() -> bookingBot.sendMessage(
-                email, NotificationConfigurator.bookingCreated(booking)));
+        String message = NotificationConfigurator.bookingCreated(booking);
+        telegramNotificationService.sendMessageAsync(email, message);
         return bookingMapper.toDto(booking);
     }
 
@@ -66,8 +66,8 @@ public class BookingServiceImpl implements BookingService {
         checkBookingStatus(booking, PENDING_STATUS);
         setBookingStatusToBooking(booking, CANCELED_STATUS);
         bookingRepository.save(booking);
-        sendNotificationSafe(() -> bookingBot.sendMessage(
-                email, NotificationConfigurator.bookingCancelled(booking)));
+        String message = NotificationConfigurator.bookingCancelled(booking);
+        telegramNotificationService.sendMessageAsync(email, message);
         return bookingMapper.toDto(booking);
     }
 
@@ -80,8 +80,8 @@ public class BookingServiceImpl implements BookingService {
         isAccommodationFree(requestDto.getAccommodationId(), checkDate, DONT_HAVE_AVAILABLE_VALUE);
         bookingMapper.setUpdateInfoToBooking(booking, requestDto);
         bookingRepository.save(booking);
-        sendNotificationSafe(() -> bookingBot.sendMessage(
-                email, NotificationConfigurator.bookingUpdated(booking)));
+        String message = NotificationConfigurator.bookingUpdated(booking);
+        telegramNotificationService.sendMessageAsync(email, message);
         return bookingMapper.toDto(booking);
     }
 
@@ -170,14 +170,6 @@ public class BookingServiceImpl implements BookingService {
                 || checkInDate.equals(checkOutDate)
                 || checkInDate.isAfter(checkOutDate)) {
             throw new InvalidDateException("Invalid check in date ");
-        }
-    }
-
-    private void sendNotificationSafe(Runnable notificationAction) {
-        try {
-            notificationAction.run();
-        } catch (Exception e) {
-            log.error("Error sending notification: ", e);
         }
     }
 }

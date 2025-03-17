@@ -16,7 +16,7 @@ import org.example.bookingapplication.repository.bookingstatus.BookingStatusRepo
 import org.example.bookingapplication.repository.payment.PaymentRepository;
 import org.example.bookingapplication.repository.paymentstatus.PaymentStatusRepository;
 import org.example.bookingapplication.repository.telegramchat.TelegramChatRepository;
-import org.example.bookingapplication.telegram.BookingBot;
+import org.example.bookingapplication.telegram.notification.TelegramNotificationService;
 import org.example.bookingapplication.telegram.util.NotificationConfigurator;
 import org.example.bookingapplication.testutil.BookingSampleUtil;
 import org.junit.jupiter.api.DisplayName;
@@ -54,7 +54,7 @@ class BookingTaskTest {
     @Mock
     private PaymentStatusRepository paymentStatusRepository;
     @Mock
-    private BookingBot bookingBot;
+    private TelegramNotificationService telegramNotificationService;
     @Mock
     private TelegramChatRepository telegramChatRepository;
     @Mock
@@ -79,11 +79,13 @@ class BookingTaskTest {
 
         verify(bookingRepository, times(1)).findAllByCheckInDate(
                 LocalDate.now(), CONFIRMED_STATUS);
-        verify(bookingBot, times(1)).sendMessage(sampleBooking1.getUser().getEmail(),
+        verify(telegramNotificationService, times(1)).sendMessageAsync(
+                sampleBooking1.getUser().getEmail(),
                 NotificationConfigurator.bookingCheckInToday(sampleBooking1));
-        verify(bookingBot, times(1)).sendMessage(sampleBooking2.getUser().getEmail(),
+        verify(telegramNotificationService, times(1)).sendMessageAsync(
+                sampleBooking2.getUser().getEmail(),
                 NotificationConfigurator.bookingCheckInToday(sampleBooking2));
-        verifyNoMoreInteractions(bookingRepository, bookingBot);
+        verifyNoMoreInteractions(bookingRepository, telegramNotificationService);
     }
 
     @Test
@@ -95,6 +97,6 @@ class BookingTaskTest {
         bookingTask.ifCheckInDateIsToday();
 
         verify(bookingRepository, times(1)).findAllByCheckInDate(LocalDate.now(), CONFIRMED_STATUS);
-        verifyNoMoreInteractions(bookingRepository, bookingBot);
+        verifyNoMoreInteractions(bookingRepository, telegramNotificationService);
     }
 }

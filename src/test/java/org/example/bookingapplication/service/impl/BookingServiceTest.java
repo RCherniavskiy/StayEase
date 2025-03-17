@@ -29,7 +29,7 @@ import org.example.bookingapplication.repository.accommodation.AccommodationRepo
 import org.example.bookingapplication.repository.booking.BookingRepository;
 import org.example.bookingapplication.repository.bookingstatus.BookingStatusRepository;
 import org.example.bookingapplication.repository.user.UserRepository;
-import org.example.bookingapplication.telegram.BookingBot;
+import org.example.bookingapplication.telegram.notification.TelegramNotificationService;
 import org.example.bookingapplication.testutil.AccommodationSampleUtil;
 import org.example.bookingapplication.testutil.BookingSampleUtil;
 import org.example.bookingapplication.testutil.BookingStatusSampleUtil;
@@ -55,7 +55,7 @@ class BookingServiceTest {
     @Mock
     private CheckDateMapper checkDateMapper;
     @Mock
-    private BookingBot bookingBot;
+    private TelegramNotificationService telegramNotificationService;
     @InjectMocks
     private BookingServiceImpl bookingService;
 
